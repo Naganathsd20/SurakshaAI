@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: 'Orbitron', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+    --color-cyber-green: #00ff66;
+    --color-cyber-green-glow: rgba(0, 255, 102, 0.25);
+    --color-cyber-dark: #05080e;
+    --color-cyber-card: #0c121e;
+    --color-cyber-border: #162438;
+  }
+
+  body {
+    background-color: var(--color-cyber-dark);
+    color: #e2e8f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(0, 255, 102, 0.08) 0%, transparent 60%),
+      linear-gradient(to right, rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+  }
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-mono-cyber {
+  font-family: var(--font-mono);
+}
+
+/* Custom Cyber Effects */
+.cyber-glow-green {
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+}
+
+.cyber-glow-green-lg {
+  box-shadow: 0 0 30px rgba(0, 255, 102, 0.4);
+}
+
+.cyber-glow-red {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+}
+
+.cyber-glow-amber {
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+}
+
+.cyber-border {
+  border: 1px solid rgba(0, 255, 102, 0.2);
+}
+
+.cyber-border-hover:hover {
+  border-color: rgba(0, 255, 102, 0.6);
+  box-shadow: 0 0 12px rgba(0, 255, 102, 0.25);
+}
+
+.cyber-card {
+  background: rgba(12, 18, 30, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 48, 74, 0.6);
+}
+
+.cyber-gradient-text {
+  background: linear-gradient(135deg, #00ff66 0%, #10b981 50%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
