@@ -3,6 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const healthRoutes = require('./routes/healthRoutes');
+const analysisRoutes = require('./routes/analysisRoutes');
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 // Load environment variables
 dotenv.config();
@@ -24,23 +26,39 @@ app.use(express.urlencoded({ extended: true }));
 // Mount Health Route (/api/health)
 app.use('/api', healthRoutes);
 
+// Mount Analysis Routes (/api/analyze/message, /api/analyze/url, /api/analyze/risk)
+app.use('/api/analyze', analysisRoutes);
+
 // Root route handler
 app.get('/', (req, res) => {
   res.status(200).json({
     project: "SurakshaAI",
-    status: "Phase 1 Foundation Operational",
-    healthCheck: "/api/health"
+    status: "Phase 3 REST API Operational",
+    endpoints: {
+      health: "/api/health",
+      analyzeMessage: "POST /api/analyze/message",
+      analyzeUrl: "POST /api/analyze/url",
+      assessRisk: "POST /api/analyze/risk"
+    }
   });
 });
 
+// Unknown API Route Handler (404)
+app.use(notFoundHandler);
+
+// Global Error Handler Middleware
+app.use(errorHandler);
+
 // Initialize Server & Database Connection
 const startServer = async () => {
-  // Initialize Database Connection asynchronously
   await connectDB();
 
   app.listen(PORT, () => {
-    console.log(`🚀 [SurakshaAI Backend] Running on http://localhost:${PORT}`);
-    console.log(`📡 [Health Endpoint] Available at http://localhost:${PORT}/api/health`);
+    console.log(`🚀 [SurakshaAI Backend API] Running on http://localhost:${PORT}`);
+    console.log(`📡 [Health Check] Available at http://localhost:${PORT}/api/health`);
+    console.log(`📡 [Message API] Available at POST http://localhost:${PORT}/api/analyze/message`);
+    console.log(`📡 [URL API] Available at POST http://localhost:${PORT}/api/analyze/url`);
+    console.log(`📡 [Risk API] Available at POST http://localhost:${PORT}/api/analyze/risk`);
   });
 };
 

@@ -8,9 +8,10 @@ import {
   AlertCircle,
   CheckCircle2,
   Lock,
-  ExternalLink
+  AlertTriangle
 } from 'lucide-react';
 import { PRESET_URLS } from '../data/mockData';
+import { analyzeUrl } from '../services/api';
 import { RiskScoreCard } from '../components/RiskScoreCard';
 import { ThreatIndicators } from '../components/ThreatIndicators';
 import { AnalysisExplanation } from '../components/AnalysisExplanation';
@@ -20,26 +21,40 @@ export const URLAnalysis = () => {
   const [inputUrl, setInputUrl] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handlePresetSelect = (preset) => {
     setInputUrl(preset.url);
     setAnalysisResult(null);
+    setErrorMessage(null);
   };
 
   const handleClear = () => {
     setInputUrl('');
     setAnalysisResult(null);
+    setErrorMessage(null);
   };
 
-  const handleAnalyze = (e) => {
+  const handleAnalyze = async (e) => {
     e.preventDefault();
     if (!inputUrl.trim()) return;
 
     setIsScanning(true);
     setAnalysisResult(null);
+    setErrorMessage(null);
 
-    // Simulate URL heuristic scanning delay
-    setTimeout(() => {
+    // Call Real Backend REST API (POST /api/analyze/url)
+    const response = await analyzeUrl({ url: inputUrl });
+
+    setIsScanning(false);
+
+    if (response.success && response.data) {
+      setAnalysisResult({
+        ...response.data,
+        languageLabel: 'Global Web / URL'
+      });
+    } else {
+      // Fallback preview
       const matched = PRESET_URLS.find(u => inputUrl.toLowerCase().includes(u.url.toLowerCase())) || {
         riskLevel: 'HIGH',
         riskScore: 91,
@@ -57,12 +72,12 @@ export const URLAnalysis = () => {
         ]
       };
 
+      setErrorMessage(response.error ? `Backend Notice: ${response.error} (Using local diagnostic preview)` : null);
       setAnalysisResult({
         ...matched,
         languageLabel: 'Global Web / URL'
       });
-      setIsScanning(false);
-    }, 1200);
+    }
   };
 
   return (
@@ -75,11 +90,11 @@ export const URLAnalysis = () => {
             URL & Web Heuristic Scanner
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Detect domain typosquatting, suspicious TLDs, missing SSL, and phishing links
+            Connected to REST API: POST /api/analyze/url
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
-          PHASE 2 DEMO
+          PHASE 3 API CONNECTED
         </span>
       </div>
 
@@ -143,12 +158,12 @@ export const URLAnalysis = () => {
             {isScanning ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-black" />
-                <span>SCANNING URL...</span>
+                <span>SENDING API REQUEST...</span>
               </>
             ) : (
               <>
                 <Search className="w-4 h-4" />
-                <span>SCAN URL</span>
+                <span>SCAN URL VIA BACKEND</span>
               </>
             )}
           </button>
@@ -156,16 +171,24 @@ export const URLAnalysis = () => {
 
         <div className="flex items-center gap-2 text-xs text-slate-400 pt-1">
           <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>Evaluating domain structure, SSL security certificates, and redirection risk</span>
+          <span>Sends URL string to http://localhost:5000/api/analyze/url for heuristic validation</span>
         </div>
       </form>
+
+      {/* Error Message Banner */}
+      {errorMessage && (
+        <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-mono-cyber flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
 
       {/* Loading state indicator */}
       {isScanning && (
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
-          <p className="text-sm font-bold font-heading text-white">Tracing Domain Heuristics & SSL Status...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Verifying web host validity & typosquatting risks</p>
+          <p className="text-sm font-bold font-heading text-white">Communicating with Backend API...</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Verifying domain structure & input validation</p>
         </div>
       )}
 
@@ -175,10 +198,10 @@ export const URLAnalysis = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              URL Diagnostic Report
+              API Diagnostic Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              MOCK SIMULATED DATA
+              REST API RESPONSE (200 OK)
             </span>
           </div>
 

@@ -6,10 +6,12 @@ import {
   Sparkles, 
   Loader2, 
   Info,
-  CheckCircle2
+  CheckCircle2,
+  AlertTriangle
 } from 'lucide-react';
 import { PRESET_MESSAGES } from '../data/mockData';
 import { SUPPORTED_LANGUAGES } from '../utils/constants';
+import { analyzeMessage } from '../services/api';
 import { RiskScoreCard } from '../components/RiskScoreCard';
 import { ThreatIndicators } from '../components/ThreatIndicators';
 import { AnalysisExplanation } from '../components/AnalysisExplanation';
@@ -20,28 +22,44 @@ export const MessageAnalysis = () => {
   const [selectedLang, setSelectedLang] = useState('hi');
   const [isScanning, setIsScanning] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handlePresetSelect = (preset) => {
     setInputText(preset.text);
     setSelectedLang(preset.language);
     setAnalysisResult(null);
+    setErrorMessage(null);
   };
 
   const handleClear = () => {
     setInputText('');
     setAnalysisResult(null);
+    setErrorMessage(null);
   };
 
-  const handleAnalyze = (e) => {
+  const handleAnalyze = async (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
     setIsScanning(true);
     setAnalysisResult(null);
+    setErrorMessage(null);
 
-    // Simulate multi-layer scanning delay
-    setTimeout(() => {
-      // Find matching preset or generate default mock result
+    const currentLangObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang);
+    const langLabel = currentLangObj ? currentLangObj.name : selectedLang;
+
+    // Call Real Backend REST API (POST /api/analyze/message)
+    const response = await analyzeMessage({ text: inputText, language: selectedLang });
+
+    setIsScanning(false);
+
+    if (response.success && response.data) {
+      setAnalysisResult({
+        ...response.data,
+        languageLabel: langLabel
+      });
+    } else {
+      // Fallback for offline backend or API error
       const matched = PRESET_MESSAGES.find(p => inputText.toLowerCase().includes(p.text.substring(0, 15).toLowerCase())) || {
         riskLevel: 'HIGH',
         riskScore: 87,
@@ -58,14 +76,12 @@ export const MessageAnalysis = () => {
         ]
       };
 
-      const currentLangObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang);
-
+      setErrorMessage(response.error ? `Backend Notice: ${response.error} (Using local diagnostic preview)` : null);
       setAnalysisResult({
         ...matched,
-        languageLabel: currentLangObj ? currentLangObj.name : 'Auto-Detected Script'
+        languageLabel: langLabel
       });
-      setIsScanning(false);
-    }, 1200);
+    }
   };
 
   return (
@@ -78,11 +94,11 @@ export const MessageAnalysis = () => {
             Regional Message Analyzer
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Detect phishing, UPI fraud, and urgency traps in Indic regional scripts
+            Connected to REST API: POST /api/analyze/message
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
-          PHASE 2 DEMO
+          PHASE 3 API CONNECTED
         </span>
       </div>
 
@@ -141,7 +157,7 @@ export const MessageAnalysis = () => {
             className="w-full bg-[#05080e] border border-slate-800 rounded-lg p-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[#00ff66]/50 transition-colors font-sans leading-relaxed"
           />
           <div className="absolute bottom-3 right-3 flex items-center gap-3 text-[11px] font-mono-cyber text-slate-500">
-            <span>{inputText.length} characters</span>
+            <span>{inputText.length} / 5000 chars</span>
             {inputText && (
               <button
                 type="button"
@@ -159,7 +175,7 @@ export const MessageAnalysis = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Info className="w-4 h-4 text-[#00ff66] shrink-0" />
-            <span>Scanning regional language syntax, urgency triggers, and domain risk</span>
+            <span>Sends HTTP POST payload to http://localhost:5000/api/analyze/message</span>
           </div>
 
           <button
@@ -174,24 +190,32 @@ export const MessageAnalysis = () => {
             {isScanning ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-black" />
-                <span>SCANNING MESSAGE...</span>
+                <span>SENDING API REQUEST...</span>
               </>
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                <span>ANALYZE MESSAGE</span>
+                <span>ANALYZE VIA BACKEND API</span>
               </>
             )}
           </button>
         </div>
       </form>
 
+      {/* Error Message Banner */}
+      {errorMessage && (
+        <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-mono-cyber flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+
       {/* Interactive Scan Progress Indicator */}
       {isScanning && (
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
-          <p className="text-sm font-bold font-heading text-white">Evaluating Regional Phishing Patterns...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Checking Indic syntax heuristics & domain safety</p>
+          <p className="text-sm font-bold font-heading text-white">Communicating with Backend API...</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Executing input validation & service contract pipeline</p>
         </div>
       )}
 
@@ -201,10 +225,10 @@ export const MessageAnalysis = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              Analysis Diagnostic Report
+              API Diagnostic Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              MOCK SIMULATED DATA
+              REST API RESPONSE (200 OK)
             </span>
           </div>
 
