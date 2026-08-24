@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #05080e;
+    --bg-surface: #0a0f1d;
+    --bg-card: #0d1527;
+    --cyber-green: #00ff66;
+    --cyber-green-dim: #00cc52;
+    --cyber-green-glow: rgba(0, 255, 102, 0.15);
+    --border-cyber: rgba(0, 255, 102, 0.2);
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: #f1f5f9;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  code, pre, .font-mono-cyber {
+    font-family: 'Fira Code', monospace;
+  }
+}
+
+/* Custom Cyber Aesthetics Utilities */
+.cyber-glow {
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.15), 0 0 40px rgba(0, 255, 102, 0.05);
+}
+
+.cyber-glow-sm {
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+}
+
+.cyber-border {
+  border: 1px solid rgba(0, 255, 102, 0.2);
+}
+
+.cyber-border-hover:hover {
+  border-color: rgba(0, 255, 102, 0.5);
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+}
+
+.cyber-card {
+  background-color: #0b111e;
+  border: 1px solid rgba(30, 41, 59, 0.8);
+  transition: all 0.2s ease-in-out;
+}
+
+.cyber-card:hover {
+  border-color: rgba(0, 255, 102, 0.3);
+}
+
+.text-cyber-green {
+  color: #00ff66;
+}
+
+.bg-cyber-green {
+  background-color: #00ff66;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #05080e;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff66;
+}
