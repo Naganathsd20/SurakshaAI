@@ -90,11 +90,11 @@ export const URLAnalysis = () => {
             URL & Web Heuristic Scanner
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Connected to REST API: POST /api/analyze/url
+            Rule-Based URL Engine: Protocol, IP Host, Domain Structure & Keywords
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
-          PHASE 3 API CONNECTED
+          PHASE 4 DETECTION ENGINE
         </span>
       </div>
 
@@ -158,7 +158,7 @@ export const URLAnalysis = () => {
             {isScanning ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-black" />
-                <span>SENDING API REQUEST...</span>
+                <span>SCANNING URL...</span>
               </>
             ) : (
               <>
@@ -171,7 +171,7 @@ export const URLAnalysis = () => {
 
         <div className="flex items-center gap-2 text-xs text-slate-400 pt-1">
           <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>Sends URL string to http://localhost:5000/api/analyze/url for heuristic validation</span>
+          <span>Executes Phase 4 URL protocol, IP host, and domain heuristic rules</span>
         </div>
       </form>
 
@@ -187,8 +187,8 @@ export const URLAnalysis = () => {
       {isScanning && (
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
-          <p className="text-sm font-bold font-heading text-white">Communicating with Backend API...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Verifying domain structure & input validation</p>
+          <p className="text-sm font-bold font-heading text-white">Running URL Heuristic Detector...</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Verifying IP host patterns, SSL status, and typosquatting indicators</p>
         </div>
       )}
 
@@ -198,16 +198,20 @@ export const URLAnalysis = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              API Diagnostic Report
+              URL Diagnostic Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              REST API RESPONSE (200 OK)
+              PHASE 4 ENGINE OUTPUT
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <RiskScoreCard score={analysisResult.riskScore} riskLevel={analysisResult.riskLevel} />
-            <ThreatIndicators indicators={analysisResult.indicators} riskLevel={analysisResult.riskLevel} />
+            <ThreatIndicators
+              indicators={analysisResult.indicators}
+              evidenceList={analysisResult.evidenceList}
+              riskLevel={analysisResult.riskLevel}
+            />
           </div>
 
           <AnalysisExplanation

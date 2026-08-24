@@ -1,62 +1,63 @@
-/**
- * URL Analysis Service Interface (Phase 3 Foundation)
- * Accepts a web link URL string and returns a structured foundation response contract.
- * Note: Real web scraping & domain heuristic scanners will extend this interface in Phase 4.
- */
+const { detectUrlIndicators } = require('./detection/urlDetector');
 
+/**
+ * URL Analysis Service (Phase 4 Detection Integration)
+ * Runs real deterministic rule-based URL detection on web links.
+ */
 const analyzeUrlService = async (url) => {
   const trimmedUrl = url.trim();
-  const lowerUrl = trimmedUrl.toLowerCase();
 
-  const isHttps = lowerUrl.startsWith('https://');
-  const isIpAddress = /^(http:\/\/|https:\/\/)?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(lowerUrl);
-  const containsSpoofKeywords = /sbi|hdfc|kyc|verify|bank|login|update|free|bonus|claim/i.test(lowerUrl);
-  const isGovDomain = lowerUrl.includes('.gov.in') || lowerUrl.includes('.nic.in');
+  // Execute Real Phase 4 Rule-Based URL Detector
+  const detectionResult = detectUrlIndicators(trimmedUrl);
+
+  // Format indicator strings for UI compatibility
+  const indicatorsFormatted = detectionResult.evidenceList.map(item => `${item.label} (${item.evidence})`);
+
+  const indicatorCount = detectionResult.indicatorCount;
+  const isHighRisk = detectionResult.evidenceList.some(item => item.severity === 'high');
 
   let riskLevel = 'SAFE';
-  let riskScore = 10;
-  let indicators = ['Valid SSL Protocol (HTTPS)', 'Standard Domain Structure'];
-  let explanation = 'Target URL presents standard web domain indicators with secure protocol.';
-  let recommendations = [
-    'Url structure appears safe.',
-    'Always ensure the site address matches the official domain before entering credentials.'
-  ];
+  let riskScore = 2;
+  let explanation = 'Target URL exhibits safe protocol and standard domain structure with no threat indicators detected.';
 
-  if (isGovDomain) {
-    riskLevel = 'SAFE';
-    riskScore = 2;
-    indicators = ['Verified National Domain (.gov.in)', 'Valid SSL Encryption'];
-    explanation = 'Target URL belongs to an official Government of India web domain.';
-    recommendations = ['This link leads to an official government portal. It is safe to proceed.'];
-  } else if (isIpAddress || (containsSpoofKeywords && !isHttps)) {
-    riskLevel = 'HIGH';
-    riskScore = 94;
-    indicators = [
-      isIpAddress ? 'Raw IP Address Host Name' : 'Missing SSL / Non-HTTPS Protocol (HTTP)',
-      'Potential Brand Spoofing / Typosquatting Pattern',
-      'Unverified Non-Standard Domain Registration'
-    ];
-    explanation = 'Target web link uses an unencrypted HTTP protocol combined with financial brand keywords, which strongly matches active phishing portals.';
-    recommendations = [
-      'Do NOT enter passwords, OTPs, or credit card details on this page.',
-      'Check that banking links end with official domains like .co.in or .com.'
-    ];
-  } else if (containsSpoofKeywords || !isHttps) {
-    riskLevel = 'MEDIUM';
-    riskScore = 62;
-    indicators = ['Unencrypted HTTP Protocol', 'Keyword Suspicion Match'];
-    explanation = 'URL lacks secure HTTPS encryption or includes suspicious keyword combinations.';
-    recommendations = ['Exercise caution when visiting this URL. Do not submit sensitive data.'];
+  if (indicatorCount > 0) {
+    if (isHighRisk || indicatorCount >= 2) {
+      riskLevel = 'HIGH';
+      riskScore = Math.min(75 + (indicatorCount * 7), 96);
+      explanation = `Real URL detection engine identified ${indicatorCount} security indicator(s) including IP host usage, unencrypted protocol, or typosquatting patterns.`;
+    } else {
+      riskLevel = 'MEDIUM';
+      riskScore = Math.min(45 + (indicatorCount * 10), 68);
+      explanation = `Real URL detection engine identified ${indicatorCount} moderate security indicator(s). Caution is recommended.`;
+    }
+  }
+
+  // Generate actionable recommendations
+  const recommendations = [];
+  if (detectionResult.evidenceList.some(e => e.code === 'IP_HOST')) {
+    recommendations.push('Do NOT enter credentials or personal data on raw IP address links.');
+  }
+  if (detectionResult.evidenceList.some(e => e.code === 'HTTP_PROTOCOL')) {
+    recommendations.push('Ensure the web portal uses secure HTTPS encryption before proceeding.');
+  }
+  if (detectionResult.evidenceList.some(e => e.code === 'SUSPICIOUS_DOMAIN_SEPARATOR' || e.code === 'PHISHING_URL_KEYWORD')) {
+    recommendations.push('Verify that the web address matches official bank/service domains (e.g. sbi.co.in or .gov.in).');
+  }
+  if (recommendations.length === 0) {
+    recommendations.push('This link appears safe based on domain structure checks.');
+    recommendations.push('Always check that your browser displays a secure lock icon.');
   }
 
   return {
     inputType: 'url',
     url: trimmedUrl,
-    isHttps,
+    detected: detectionResult.detected,
+    indicatorCount: detectionResult.indicatorCount,
+    evidenceList: detectionResult.evidenceList,
+    indicators: indicatorsFormatted.length > 0 ? indicatorsFormatted : ['No threat indicators detected'],
     riskScore,
     riskLevel,
     result: riskLevel === 'HIGH' ? 'SUSPICIOUS_PHISHING_URL' : riskLevel === 'MEDIUM' ? 'MODERATE_RISK_URL' : 'VERIFIED_SAFE_URL',
-    indicators,
     explanation,
     recommendations,
     timestamp: new Date().toISOString()

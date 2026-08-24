@@ -59,7 +59,7 @@ export const MessageAnalysis = () => {
         languageLabel: langLabel
       });
     } else {
-      // Fallback for offline backend or API error
+      // Fallback preview
       const matched = PRESET_MESSAGES.find(p => inputText.toLowerCase().includes(p.text.substring(0, 15).toLowerCase())) || {
         riskLevel: 'HIGH',
         riskScore: 87,
@@ -94,11 +94,11 @@ export const MessageAnalysis = () => {
             Regional Message Analyzer
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Connected to REST API: POST /api/analyze/message
+            Rule-Based Detection Engine: Urgency, OTPs, Banking Fraud & Impersonation
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
-          PHASE 3 API CONNECTED
+          PHASE 4 DETECTION ENGINE
         </span>
       </div>
 
@@ -153,7 +153,7 @@ export const MessageAnalysis = () => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             rows={5}
-            placeholder="Paste suspicious SMS, WhatsApp message, or email snippet here (e.g. प्रिय ग्राहक, आपका SBI खाता बंद हो जाएगा...)"
+            placeholder="Paste suspicious SMS, WhatsApp message, or email snippet here (e.g. URGENT! Your bank account will be blocked today. Verify your OTP...)"
             className="w-full bg-[#05080e] border border-slate-800 rounded-lg p-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[#00ff66]/50 transition-colors font-sans leading-relaxed"
           />
           <div className="absolute bottom-3 right-3 flex items-center gap-3 text-[11px] font-mono-cyber text-slate-500">
@@ -175,7 +175,7 @@ export const MessageAnalysis = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Info className="w-4 h-4 text-[#00ff66] shrink-0" />
-            <span>Sends HTTP POST payload to http://localhost:5000/api/analyze/message</span>
+            <span>Executes Phase 4 message detection engine heuristics</span>
           </div>
 
           <button
@@ -190,12 +190,12 @@ export const MessageAnalysis = () => {
             {isScanning ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-black" />
-                <span>SENDING API REQUEST...</span>
+                <span>RUNNING DETECTION RULES...</span>
               </>
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                <span>ANALYZE VIA BACKEND API</span>
+                <span>ANALYZE MESSAGE</span>
               </>
             )}
           </button>
@@ -214,8 +214,8 @@ export const MessageAnalysis = () => {
       {isScanning && (
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
-          <p className="text-sm font-bold font-heading text-white">Communicating with Backend API...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Executing input validation & service contract pipeline</p>
+          <p className="text-sm font-bold font-heading text-white">Running Phishing Rule Engine...</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Checking urgency patterns, OTP requests, and impersonation triggers</p>
         </div>
       )}
 
@@ -225,16 +225,20 @@ export const MessageAnalysis = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              API Diagnostic Report
+              Phishing Detection Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              REST API RESPONSE (200 OK)
+              PHASE 4 ENGINE OUTPUT
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <RiskScoreCard score={analysisResult.riskScore} riskLevel={analysisResult.riskLevel} />
-            <ThreatIndicators indicators={analysisResult.indicators} riskLevel={analysisResult.riskLevel} />
+            <ThreatIndicators
+              indicators={analysisResult.indicators}
+              evidenceList={analysisResult.evidenceList}
+              riskLevel={analysisResult.riskLevel}
+            />
           </div>
 
           <AnalysisExplanation
