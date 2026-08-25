@@ -12,8 +12,10 @@ import {
 import { PRESET_MESSAGES } from '../data/mockData';
 import { SUPPORTED_LANGUAGES } from '../utils/constants';
 import { analyzeMessage } from '../services/api';
+import { RiskScoreCard } from '../components/RiskScoreCard';
 import { LanguageMetaBadge } from '../components/LanguageMetaBadge';
 import { IntentSignals } from '../components/IntentSignals';
+import { WeightedEvidence } from '../components/WeightedEvidence';
 import { ThreatIndicators } from '../components/ThreatIndicators';
 import { AnalysisExplanation } from '../components/AnalysisExplanation';
 import { SafetyRecommendation } from '../components/SafetyRecommendation';
@@ -65,14 +67,14 @@ export const MessageAnalysis = () => {
         <div>
           <h1 className="text-2xl font-bold font-heading text-white flex items-center gap-3">
             <MessageSquareCode className="w-6 h-6 text-[#00ff66]" />
-            Regional Message & NLP Analyzer
+            Regional Message & Risk Analyzer
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Language Pre-Processing, NLP Intent Signals & Phase 4 Rule Indicators
+            Language Pre-Processing, NLP Intent Engine, Phase 4 Rules & Phase 6 Risk Scoring Engine
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0">
-          PHASE 5 — AI/NLP & REGIONAL
+          PHASE 6 — RISK SCORING & EXPLAINABILITY
         </span>
       </div>
 
@@ -101,7 +103,7 @@ export const MessageAnalysis = () => {
       <form onSubmit={handleAnalyze} className="cyber-card p-6 rounded-xl border border-slate-800 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <label className="text-xs font-mono-cyber text-slate-300 font-semibold flex items-center gap-2">
-            <span>PASTE REGIONAL MESSAGE FOR NLP SCAN</span>
+            <span>PASTE REGIONAL MESSAGE FOR RISK EVALUATION</span>
           </label>
 
           {/* Language Selector */}
@@ -149,7 +151,7 @@ export const MessageAnalysis = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Info className="w-4 h-4 text-[#00ff66] shrink-0" />
-            <span>Executes Language Pre-Processing, NLP Intent Engine & Phase 4 Rules</span>
+            <span>Executes Phase 6 Weighted Risk Scoring & Explainability Engine</span>
           </div>
 
           <button
@@ -164,12 +166,12 @@ export const MessageAnalysis = () => {
             {isScanning ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-black" />
-                <span>RUNNING NLP & INTENT PIPELINE...</span>
+                <span>RUNNING RISK ENGINE...</span>
               </>
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                <span>ANALYZE MESSAGE</span>
+                <span>EVALUATE RISK</span>
               </>
             )}
           </button>
@@ -188,8 +190,8 @@ export const MessageAnalysis = () => {
       {isScanning && (
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
-          <p className="text-sm font-bold font-heading text-white">Processing Language & Analyzing NLP Intent...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Running script identification, intent signal extraction, and Phase 4 indicator checks</p>
+          <p className="text-sm font-bold font-heading text-white">Calculating Weighted Risk & Explainability...</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Aggregating Phase 4 rules and Phase 5 NLP signals through Phase 6 scoring engine</p>
         </div>
       )}
 
@@ -199,35 +201,44 @@ export const MessageAnalysis = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              Phase 5 Analysis Report
+              Phase 6 Risk Assessment Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              STRUCTURED NLP & PHASE 4 OUTPUT
+              FINAL RISK & EXPLAINABILITY ENGINE
             </span>
           </div>
 
-          {/* 1. Language Metadata Card */}
+          {/* 1. Risk Score Card */}
+          <RiskScoreCard score={analysisResult.riskScore} riskLevel={analysisResult.riskLevel} />
+
+          {/* 2. Language Metadata Card */}
           <LanguageMetaBadge language={analysisResult.language} />
 
-          {/* 2. NLP Intent Signals Card */}
+          {/* 3. Phase 6 Weighted Evidence Breakdown */}
+          <WeightedEvidence
+            weightedEvidence={analysisResult.weightedEvidence}
+            scoringBreakdown={analysisResult.scoringBreakdown}
+          />
+
+          {/* 4. NLP Intent Signals Card */}
           <IntentSignals
             intentSignals={analysisResult.intentSignals}
             nlpAnalysis={analysisResult.nlpAnalysis}
           />
 
-          {/* 3. Phase 4 Rule Indicators Card */}
+          {/* 5. Phase 4 Rule Indicators Card */}
           <ThreatIndicators
             indicators={analysisResult.phase4Indicators?.evidenceList?.map(e => `${e.label} (${e.evidence})`) || []}
             evidenceList={analysisResult.phase4Indicators?.evidenceList || []}
           />
 
-          {/* 4. Contextual Explanation */}
+          {/* 6. Contextual Explanation */}
           <AnalysisExplanation
             explanation={analysisResult.explanation}
             languageLabel={analysisResult.language?.name || selectedLang}
           />
 
-          {/* 5. Safety Recommendations */}
+          {/* 7. Safety Recommendations */}
           <SafetyRecommendation recommendations={analysisResult.recommendations} />
         </div>
       )}

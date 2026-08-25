@@ -14,6 +14,7 @@ import { PRESET_URLS } from '../data/mockData';
 import { analyzeUrl } from '../services/api';
 import { RiskScoreCard } from '../components/RiskScoreCard';
 import { ThreatIndicators } from '../components/ThreatIndicators';
+import { WeightedEvidence } from '../components/WeightedEvidence';
 import { AnalysisExplanation } from '../components/AnalysisExplanation';
 import { SafetyRecommendation } from '../components/SafetyRecommendation';
 
@@ -54,29 +55,7 @@ export const URLAnalysis = () => {
         languageLabel: 'Global Web / URL'
       });
     } else {
-      // Fallback preview
-      const matched = PRESET_URLS.find(u => inputUrl.toLowerCase().includes(u.url.toLowerCase())) || {
-        riskLevel: 'HIGH',
-        riskScore: 91,
-        indicators: [
-          'Unverified Non-Standard Domain',
-          'Potential Typosquatting Brand Spoofing',
-          'Missing SSL Certificate / Non-HTTPS Protocol',
-          'Suspicious URL Query Structure'
-        ],
-        explanation: 'The target web address exhibits strong domain spoofing indicators. The domain registration does not match official corporate or government records.',
-        recommendations: [
-          'Do NOT visit this link or enter personal credentials.',
-          'Always check that banking portals use secure HTTPS and official domain extensions (.com, .co.in, .gov.in).',
-          'Report the suspicious link to cybercrime authorities.'
-        ]
-      };
-
-      setErrorMessage(response.error ? `Backend Notice: ${response.error} (Using local diagnostic preview)` : null);
-      setAnalysisResult({
-        ...matched,
-        languageLabel: 'Global Web / URL'
-      });
+      setErrorMessage(response.error ? `Backend Error: ${response.error}` : 'Unable to connect to backend server.');
     }
   };
 
@@ -87,14 +66,14 @@ export const URLAnalysis = () => {
         <div>
           <h1 className="text-2xl font-bold font-heading text-white flex items-center gap-3">
             <Globe className="w-6 h-6 text-[#00ff66]" />
-            URL & Web Heuristic Scanner
+            URL & Web Risk Scanner
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Rule-Based URL Engine: Protocol, IP Host, Domain Structure & Keywords
+            URL Heuristics, Protocol Checks & Phase 6 Risk Scoring Engine
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
-          PHASE 4 DETECTION ENGINE
+          PHASE 6 — RISK SCORING & EXPLAINABILITY
         </span>
       </div>
 
@@ -123,7 +102,7 @@ export const URLAnalysis = () => {
       <form onSubmit={handleAnalyze} className="cyber-card p-6 rounded-xl border border-slate-800 space-y-4">
         <label className="text-xs font-mono-cyber text-slate-300 font-semibold flex items-center gap-2">
           <Lock className="w-4 h-4 text-[#00ff66]" />
-          <span>TARGET WEB LINK FOR HEURISTIC SCANNERS</span>
+          <span>TARGET WEB LINK FOR RISK SCORING</span>
         </label>
 
         <div className="flex flex-col sm:flex-row gap-3">
@@ -163,15 +142,15 @@ export const URLAnalysis = () => {
             ) : (
               <>
                 <Search className="w-4 h-4" />
-                <span>SCAN URL VIA BACKEND</span>
+                <span>EVALUATE URL RISK</span>
               </>
             )}
           </button>
         </div>
 
         <div className="flex items-center gap-2 text-xs text-slate-400 pt-1">
-          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>Executes Phase 4 URL protocol, IP host, and domain heuristic rules</span>
+          <AlertCircle className="w-4 h-4 text-[#00ff66] shrink-0" />
+          <span>Executes Phase 4 URL protocol checks & Phase 6 Risk Engine</span>
         </div>
       </form>
 
@@ -187,21 +166,21 @@ export const URLAnalysis = () => {
       {isScanning && (
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
-          <p className="text-sm font-bold font-heading text-white">Running URL Heuristic Detector...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Verifying IP host patterns, SSL status, and typosquatting indicators</p>
+          <p className="text-sm font-bold font-heading text-white">Running URL Risk Engine...</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Verifying IP host patterns, SSL status, and calculating weighted risk score</p>
         </div>
       )}
 
-      {/* Mock Result Section */}
+      {/* Result Section */}
       {analysisResult && !isScanning && (
         <div className="space-y-6 animate-fade-in">
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              URL Diagnostic Report
+              URL Risk Assessment Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              PHASE 4 ENGINE OUTPUT
+              PHASE 6 ENGINE OUTPUT
             </span>
           </div>
 
@@ -213,6 +192,13 @@ export const URLAnalysis = () => {
               riskLevel={analysisResult.riskLevel}
             />
           </div>
+
+          {analysisResult.weightedEvidence && (
+            <WeightedEvidence
+              weightedEvidence={analysisResult.weightedEvidence}
+              scoringBreakdown={analysisResult.scoringBreakdown}
+            />
+          )}
 
           <AnalysisExplanation
             explanation={analysisResult.explanation}
