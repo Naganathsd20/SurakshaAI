@@ -12,7 +12,8 @@ import {
 import { PRESET_MESSAGES } from '../data/mockData';
 import { SUPPORTED_LANGUAGES } from '../utils/constants';
 import { analyzeMessage } from '../services/api';
-import { RiskScoreCard } from '../components/RiskScoreCard';
+import { LanguageMetaBadge } from '../components/LanguageMetaBadge';
+import { IntentSignals } from '../components/IntentSignals';
 import { ThreatIndicators } from '../components/ThreatIndicators';
 import { AnalysisExplanation } from '../components/AnalysisExplanation';
 import { SafetyRecommendation } from '../components/SafetyRecommendation';
@@ -45,60 +46,33 @@ export const MessageAnalysis = () => {
     setAnalysisResult(null);
     setErrorMessage(null);
 
-    const currentLangObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang);
-    const langLabel = currentLangObj ? currentLangObj.name : selectedLang;
-
     // Call Real Backend REST API (POST /api/analyze/message)
     const response = await analyzeMessage({ text: inputText, language: selectedLang });
 
     setIsScanning(false);
 
     if (response.success && response.data) {
-      setAnalysisResult({
-        ...response.data,
-        languageLabel: langLabel
-      });
+      setAnalysisResult(response.data);
     } else {
-      // Fallback preview
-      const matched = PRESET_MESSAGES.find(p => inputText.toLowerCase().includes(p.text.substring(0, 15).toLowerCase())) || {
-        riskLevel: 'HIGH',
-        riskScore: 87,
-        indicators: [
-          'Unverified Urgent Action Pattern',
-          'Suspicious External Link Detected',
-          'Financial Credential Harvesting Pattern'
-        ],
-        explanation: 'The submitted message contains high-urgency keywords combined with an unverified external link requiring immediate user action. This pattern strongly matches regional financial phishing tactics.',
-        recommendations: [
-          'Do NOT click any links provided in this message.',
-          'Verify the message directly with the official service provider.',
-          'Never share OTPs, PINs, or net banking credentials.'
-        ]
-      };
-
-      setErrorMessage(response.error ? `Backend Notice: ${response.error} (Using local diagnostic preview)` : null);
-      setAnalysisResult({
-        ...matched,
-        languageLabel: langLabel
-      });
+      setErrorMessage(response.error ? `Backend Error: ${response.error}` : 'Unable to connect to backend server.');
     }
   };
 
   return (
     <div className="space-y-8 py-2 max-w-4xl mx-auto">
       {/* Page Header */}
-      <div className="pb-4 border-b border-slate-800 flex items-center justify-between">
+      <div className="pb-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold font-heading text-white flex items-center gap-3">
             <MessageSquareCode className="w-6 h-6 text-[#00ff66]" />
-            Regional Message Analyzer
+            Regional Message & NLP Analyzer
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Rule-Based Detection Engine: Urgency, OTPs, Banking Fraud & Impersonation
+            Language Pre-Processing, NLP Intent Signals & Phase 4 Rule Indicators
           </p>
         </div>
-        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
-          PHASE 4 DETECTION ENGINE
+        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0">
+          PHASE 5 — AI/NLP & REGIONAL
         </span>
       </div>
 
@@ -106,7 +80,7 @@ export const MessageAnalysis = () => {
       <div className="space-y-2">
         <label className="text-xs font-mono-cyber text-slate-400 font-semibold flex items-center gap-2">
           <Sparkles className="w-3.5 h-3.5 text-[#00ff66]" />
-          <span>TRY SAMPLE SUSPICIOUS MESSAGES:</span>
+          <span>TRY SAMPLE REGIONAL MESSAGES:</span>
         </label>
         <div className="flex flex-wrap gap-2">
           {PRESET_MESSAGES.map((preset) => (
@@ -116,7 +90,7 @@ export const MessageAnalysis = () => {
               type="button"
               className="px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-[#00ff66]/50 text-xs font-mono-cyber text-slate-300 hover:text-white transition-colors text-left flex items-center gap-2"
             >
-              <span className={`w-2 h-2 rounded-full ${preset.riskLevel === 'SAFE' ? 'bg-[#00ff66]' : 'bg-red-400'}`} />
+              <span className="w-2 h-2 rounded-full bg-[#00ff66]" />
               <span>{preset.title}</span>
             </button>
           ))}
@@ -127,12 +101,12 @@ export const MessageAnalysis = () => {
       <form onSubmit={handleAnalyze} className="cyber-card p-6 rounded-xl border border-slate-800 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <label className="text-xs font-mono-cyber text-slate-300 font-semibold flex items-center gap-2">
-            <span>PASTE MESSAGE TEXT FOR SCANNERS</span>
+            <span>PASTE REGIONAL MESSAGE FOR NLP SCAN</span>
           </label>
 
           {/* Language Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono-cyber text-slate-500">SCRIPT:</span>
+            <span className="text-[11px] font-mono-cyber text-slate-500">INTENDED SCRIPT:</span>
             <select
               value={selectedLang}
               onChange={(e) => setSelectedLang(e.target.value)}
@@ -153,7 +127,7 @@ export const MessageAnalysis = () => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             rows={5}
-            placeholder="Paste suspicious SMS, WhatsApp message, or email snippet here (e.g. URGENT! Your bank account will be blocked today. Verify your OTP...)"
+            placeholder="Paste suspicious SMS, WhatsApp message, or email snippet in Hindi, Kannada, Marathi, Tamil, Telugu, Bengali, Hinglish or English..."
             className="w-full bg-[#05080e] border border-slate-800 rounded-lg p-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[#00ff66]/50 transition-colors font-sans leading-relaxed"
           />
           <div className="absolute bottom-3 right-3 flex items-center gap-3 text-[11px] font-mono-cyber text-slate-500">
@@ -175,7 +149,7 @@ export const MessageAnalysis = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Info className="w-4 h-4 text-[#00ff66] shrink-0" />
-            <span>Executes Phase 4 message detection engine heuristics</span>
+            <span>Executes Language Pre-Processing, NLP Intent Engine & Phase 4 Rules</span>
           </div>
 
           <button
@@ -190,7 +164,7 @@ export const MessageAnalysis = () => {
             {isScanning ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-black" />
-                <span>RUNNING DETECTION RULES...</span>
+                <span>RUNNING NLP & INTENT PIPELINE...</span>
               </>
             ) : (
               <>
@@ -214,8 +188,8 @@ export const MessageAnalysis = () => {
       {isScanning && (
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
-          <p className="text-sm font-bold font-heading text-white">Running Phishing Rule Engine...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Checking urgency patterns, OTP requests, and impersonation triggers</p>
+          <p className="text-sm font-bold font-heading text-white">Processing Language & Analyzing NLP Intent...</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Running script identification, intent signal extraction, and Phase 4 indicator checks</p>
         </div>
       )}
 
@@ -225,27 +199,35 @@ export const MessageAnalysis = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              Phishing Detection Report
+              Phase 5 Analysis Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              PHASE 4 ENGINE OUTPUT
+              STRUCTURED NLP & PHASE 4 OUTPUT
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <RiskScoreCard score={analysisResult.riskScore} riskLevel={analysisResult.riskLevel} />
-            <ThreatIndicators
-              indicators={analysisResult.indicators}
-              evidenceList={analysisResult.evidenceList}
-              riskLevel={analysisResult.riskLevel}
-            />
-          </div>
+          {/* 1. Language Metadata Card */}
+          <LanguageMetaBadge language={analysisResult.language} />
 
-          <AnalysisExplanation
-            explanation={analysisResult.explanation}
-            languageLabel={analysisResult.languageLabel}
+          {/* 2. NLP Intent Signals Card */}
+          <IntentSignals
+            intentSignals={analysisResult.intentSignals}
+            nlpAnalysis={analysisResult.nlpAnalysis}
           />
 
+          {/* 3. Phase 4 Rule Indicators Card */}
+          <ThreatIndicators
+            indicators={analysisResult.phase4Indicators?.evidenceList?.map(e => `${e.label} (${e.evidence})`) || []}
+            evidenceList={analysisResult.phase4Indicators?.evidenceList || []}
+          />
+
+          {/* 4. Contextual Explanation */}
+          <AnalysisExplanation
+            explanation={analysisResult.explanation}
+            languageLabel={analysisResult.language?.name || selectedLang}
+          />
+
+          {/* 5. Safety Recommendations */}
           <SafetyRecommendation recommendations={analysisResult.recommendations} />
         </div>
       )}
