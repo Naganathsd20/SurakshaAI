@@ -104,9 +104,61 @@ export const assessRisk = async ({ type, payload }) => {
   }
 };
 
+/**
+ * Fetches real scan history logs from MongoDB backend
+ * GET /api/history
+ */
+export const fetchHistory = async ({ riskLevel = 'ALL', type = 'ALL', search = '', page = 1, limit = 50 } = {}) => {
+  try {
+    const params = new URLSearchParams();
+    if (riskLevel && riskLevel !== 'ALL') params.append('riskLevel', riskLevel);
+    if (type && type !== 'ALL') params.append('type', type);
+    if (search && search.trim() !== '') params.append('search', search.trim());
+    if (page) params.append('page', page);
+    if (limit) params.append('limit', limit);
+
+    const queryString = params.toString();
+    const url = `${API_BASE_URL}/history${queryString ? `?${queryString}` : ''}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || `API Error (${response.status})`);
+    }
+
+    return { success: true, data: data.data };
+  } catch (error) {
+    console.error("Fetch History API Error:", error.message);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Fetches single scan history record by ID from MongoDB backend
+ * GET /api/history/:id
+ */
+export const fetchHistoryById = async (id) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/history/${id}`);
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || `API Error (${response.status})`);
+    }
+
+    return { success: true, data: data.data };
+  } catch (error) {
+    console.error("Fetch History Item API Error:", error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 export const api = {
   checkHealth,
   analyzeMessage,
   analyzeUrl,
-  assessRisk
+  assessRisk,
+  fetchHistory,
+  fetchHistoryById
 };
