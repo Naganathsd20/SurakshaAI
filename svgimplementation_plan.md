@@ -1,148 +1,126 @@
-# SurakshaAI Implementation Plan — Phase 9: Responsive UI & Final UX Polish
+# SurakshaAI Implementation Plan — Phase 10: Security & Production Configuration
 
-## 1. Goal Description & Background (Phase 1–8 Baseline)
+## 1. Goal Description & Background (Phase 1–9 Baseline)
 
-SurakshaAI has successfully completed **Phases 1 through 8**:
-- **Phase 1:** Foundation & Project Architecture
-- **Phase 2:** Frontend Core Components & Dark Cyber Layout Baseline
-- **Phase 3:** Express REST Backend Architecture & Controllers
-- **Phase 4:** Deterministic Phishing Detection Engine (Message & URL)
-- **Phase 5:** AI/NLP & Regional Indic Language Processing (Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, Hinglish)
-- **Phase 6:** Weighted Risk Scoring Engine & Explainability Output
-- **Phase 7:** MongoDB Database Persistence & Query Filtering
-- **Phase 8:** System Integration & Real Document `scanId` Propagation
+SurakshaAI has completed **Phases 1 through 9**:
+- **Phases 1–7:** Core detection engine, regional NLP, risk scoring, and MongoDB persistence baseline.
+- **Phase 8:** Complete system integration and genuine persisted document `scanId` propagation.
+- **Phase 9:** Responsive UI and UX polish committed and pushed to `main`.
 
-**Phase 9 Objective:**
-Deliver comprehensive responsive layout optimization and final UX polish across all screen resolutions (Desktop, Tablet, Mobile) without altering underlying Phase 4–8 detection algorithms, NLP engines, risk scoring models, DB schemas, or API contracts.
+**Phase 10 Objective:**
+Harden the Node Express backend and React frontend for production readiness by implementing HTTP security headers (`helmet`), rate limiting (`express-rate-limit`), body size limits, production CORS controls, secure error handling without stack trace/credential leaks, and dynamic production environment variable support.
 
 ---
 
-## 2. UI Components & Pages to Inspect & Refine
+## 2. Security Areas to Inspect
 
-| Component / Page | Location | Inspection Target |
+| Area | Component | Inspection Objective |
 | :--- | :--- | :--- |
-| **Main Layout Shell** | `frontend/src/layouts/MainLayout.jsx` | Container padding, max-width constraints, footer placement |
-| **Header Navigation** | `frontend/src/components/Header.jsx` | Status badges, logo alignment, mobile menu trigger, flex wrapping |
-| **Sidebar Navigation** | `frontend/src/components/Sidebar.jsx` | Hidden state on mobile/tablet, hover states, active indicators |
-| **Mobile Drawer Nav** | `frontend/src/components/MobileNav.jsx` | Backdrop blur, slide-in transition, touch target size, keyboard exit |
-| **Dashboard** | `frontend/src/pages/Dashboard.jsx` | Grid cards layout on mobile, stats cards, recent activity layout |
-| **Message Analysis** | `frontend/src/pages/MessageAnalysis.jsx` | Form control flex wrapping, language selector dropdown, evidence card stacking |
-| **URL Analysis** | `frontend/src/pages/URLAnalysis.jsx` | Input group button inline/stacking on mobile, heuristic breakdown cards |
-| **Scan History** | `frontend/src/pages/History.jsx` | Table horizontal scroll behavior, search bar/filter row stacking, detail modal responsive height |
-| **Safety Guidelines** | `frontend/src/pages/SafetyTips.jsx` | Multi-column tip card grid collapse on small screens |
-| **About Page** | `frontend/src/pages/About.jsx` | Architecture badge grid, team member cards |
-| **Settings Page** | `frontend/src/pages/Settings.jsx` | Toggle switches, theme preferences form elements |
+| **HTTP Security Headers** | Express App (`server.js`) | Protect against XSS, clickjacking, MIME-sniffing via `helmet`. |
+| **Rate Limiting** | Express Router (`server.js`) | Protect against DDoS and brute-force flooding via `express-rate-limit`. |
+| **Body Size Limits** | Express Body Parser (`server.js`) | Enforce `1mb` maximum JSON payload size to prevent memory exhaustion attacks. |
+| **CORS Policy** | Express App (`server.js`) | Restrict origin access dynamically using `process.env.ALLOWED_ORIGINS`. |
+| **Error Sanitization** | `middleware/errorHandler.js` | Ensure stack traces, file paths, and database URI strings are never returned to client responses. |
+| **Database Security** | `config/db.js` | Manage connection strings strictly via `process.env.MONGODB_URI` and sanitize log outputs. |
+| **Frontend Production URL**| `utils/constants.js` | Support dynamic `VITE_API_BASE_URL` for production deployment without client secret leakage. |
 
 ---
 
-## 3. Responsive Issues to Identify
+## 3. Backend Security Changes (Phase 10 Scope)
 
-### Mobile Viewports (320px – 639px)
-- **Horizontal Scrolling / Overflow:** Ensure tables and long code/URL strings wrap cleanly (`break-words`, `truncate`) and never force body horizontal overflow.
-- **Stacked Controls:** Input fields, dropdowns, and submit buttons should stack vertically with full width touch targets (minimum 44px height).
-- **Navigation Usability:** Ensure the mobile drawer navigation (`MobileNav.jsx`) is easily dismissible with clear touch targets and proper backdrop overlay.
-- **Modal Viewport Fit:** Ensure the Scan Detail modal on `History.jsx` does not exceed vertical viewport height (`max-h-[90vh] overflow-y-auto`).
+### Dependency Installations (`backend/package.json`)
+Install production security packages:
+- `helmet`: Express security HTTP headers middleware.
+- `express-rate-limit`: API rate limiting middleware.
+- `compression`: Gzip body compression middleware.
 
-### Tablet Viewports (640px – 1023px)
-- **Grid Layout Collapses:** Ensure 2-column or 3-column card layouts smoothly transition to 1-column or 2-column grids without text truncation or card clipping.
-- **Header Badge Wrapping:** Prevent status pills (Backend Status, Phase Badge) from crowding or pushing elements off-screen.
+### Express Application Hardening (`backend/server.js`)
+- Mount `helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } })`.
+- Mount `compression()`.
+- Define and mount `apiLimiter`: 100 requests per 15-minute window per IP for `/api/` endpoints.
+- Configure `cors()` to read `process.env.ALLOWED_ORIGINS` dynamically, defaulting to dev origins (`http://localhost:3000`, `http://127.0.0.1:3000`, `http://localhost:5173`).
+- Set `express.json({ limit: '1mb' })` and `express.urlencoded({ extended: true, limit: '1mb' })`.
+- Add graceful process termination handlers (`SIGINT`, `SIGTERM`) to close Express HTTP server and MongoDB pool cleanly.
 
-### Desktop Viewports (1024px+)
-- **Container Centering:** Maintain clean `max-w-7xl` container bounds with consistent padding (`p-4 lg:p-8`).
-- **Sidebar Integration:** Fixed sidebar with consistent active page indicators and hover glow effects.
-
----
-
-## 4. Proposed UI Improvements & UX Polish
-
-- **Visual Consistency:** Preserve the signature **Dark Cyber Theme** (`#05080e` dark background, `#00ff66` neon green accents, subtle glassmorphism borders).
-- **Typography & Spacing:** Standardize heading hierarchies (`font-heading`, `font-mono-cyber`), line heights, and section padding (`space-y-6`).
-- **Button States:** Ensure clear loading, disabled, hover (`cyber-border-hover`), and active press feedback across all interactive buttons.
-- **Empty & Loading States:** Enhance skeleton loaders, progress spinners, and zero-record fallback illustrations across Message Analysis, URL Analysis, and History pages.
-- **Card Aesthetics:** Subtle glow effects (`cyber-card`) and backdrop blur on modals and floating drawers.
+### Secure Error Handler (`backend/middleware/errorHandler.js`)
+- Update `errorHandler` to inspect `NODE_ENV`.
+- Never include raw `err.stack` or raw DB error messages in client JSON responses when in production mode.
+- Ensure error messages do not leak internal file paths or `mongodb://` connection strings.
 
 ---
 
-## 5. Mobile / Tablet / Desktop Strategy
+## 4. Production & Environment Configuration Strategy
 
-- **Mobile First Responsive Classes:** Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`) systematically.
-- **Flexbox & Grid Refinements:**
-  - Convert hardcoded flex rows to `flex-col sm:flex-row`.
-  - Use `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` for dashboard and feature cards.
-  - Wrap tables in overflow containers (`overflow-x-auto`) with sticky headers or clean cell padding.
+### Environment Variables Template (`backend/.env.example`)
+Update `.env.example` to document all production variables:
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/suraksha_ai
+NODE_ENV=production
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+NLP_PROVIDER=local-nlp-engine
+```
+
+### Database Connection Hardening (`backend/config/db.js`)
+- Ensure connection options include `serverSelectionTimeoutMS: 5000`.
+- Verify console output never logs raw URI containing password credentials.
 
 ---
 
-## 6. Accessibility & Usability Improvements
+## 5. Frontend Production Safety (`frontend/src/utils/constants.js`)
 
-- **Keyboard Navigation:** Ensure interactive elements (buttons, inputs, selects, modals) have visible focus rings (`focus:ring-2 focus:ring-[#00ff66]/50`).
-- **ARIA Attributes:** Add appropriate `aria-label`, `aria-expanded`, `role="dialog"` attributes to navigation triggers and modals.
-- **Text Contrast & Readability:** Ensure muted gray text (`text-slate-400`, `text-slate-500`) meets contrast ratios against `#05080e` dark background.
-- **Touch Target Sizes:** Ensure buttons and interactive pills on touch screens have at least `44px x 44px` clickable area.
+- Update `API_BASE_URL` to dynamically inspect `import.meta.env.VITE_API_BASE_URL`:
+  ```javascript
+  export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+  ```
+- Audit frontend code to guarantee zero secrets, private keys, or DB credentials exist in client bundles.
+
+---
+
+## 6. Security Verification Strategy
+
+After applying Phase 10 security hardening, perform manual and automated API checks:
+
+1. **Oversized Input Verification:** Send >1MB request payload to `POST /api/analyze/message` to verify 413 Payload Too Large protection.
+2. **Rate Limit Verification:** Send repeated requests to verify rate limiter headers (`RateLimit-Limit`, `RateLimit-Remaining`).
+3. **Security Headers Verification:** Verify response headers include `X-Content-Type-Options`, `X-Frame-Options`, `X-DNS-Prefetch-Control`.
+4. **Invalid ObjectId & Error Leak Check:** Request `GET /api/history/invalid-id-123` and verify error response does not leak stack trace or connection URI.
+5. **CORS Verification:** Verify allowed origin response header behavior.
 
 ---
 
 ## 7. Files Likely to be Modified
 
-### Layout & Global Components
-- `frontend/src/index.css` *(Add focus-visible styling and responsive utility helpers)*
-- `frontend/src/layouts/MainLayout.jsx` *(Refine main container padding and layout flow)*
-- `frontend/src/components/Header.jsx` *(Refine responsive badge flex wrapping)*
-- `frontend/src/components/MobileNav.jsx` *(Polish mobile menu drawer transitions and touch targets)*
-- `frontend/src/components/Footer.jsx` *(Improve text centering on mobile viewports)*
-
-### Result & Indicator Components
-- `frontend/src/components/RiskScoreCard.jsx` *(Ensure gauge & score display scales nicely on mobile)*
-- `frontend/src/components/WeightedEvidence.jsx` *(Improve evidence item stacking on small screens)*
-- `frontend/src/components/IntentSignals.jsx` *(Responsive badge grid)*
-- `frontend/src/components/LanguageMetaBadge.jsx` *(Wrap language metadata cleanly)*
-
-### Pages
-- `frontend/src/pages/Dashboard.jsx` *(Refine responsive grid columns and stats cards)*
-- `frontend/src/pages/MessageAnalysis.jsx` *(Polish preset selector scroll/wrap & button loading state)*
-- `frontend/src/pages/URLAnalysis.jsx` *(Optimize input group stacking on small screens)*
-- `frontend/src/pages/History.jsx` *(Polish table scroll, filter bar stacking, detail modal height)*
-- `frontend/src/pages/SafetyTips.jsx` *(Grid collapse for safety tips cards)*
-- `frontend/src/pages/About.jsx` *(Refine architecture diagram grid)*
+- `backend/package.json` *(Add helmet, express-rate-limit, compression)*
+- `backend/package-lock.json` *(Lockfile update)*
+- `backend/server.js` *(Mount helmet, rate-limiter, compression, CORS config, graceful shutdown)*
+- `backend/middleware/errorHandler.js` *(Sanitize stack trace and connection leakage)*
+- `backend/config/db.js` *(Sanitize database connection logging)*
+- `backend/.env.example` *(Document production environment variables)*
+- `frontend/src/utils/constants.js` *(Dynamic VITE_API_BASE_URL resolution)*
 
 ---
 
-## 8. Phase 9 Acceptance Criteria
+## 8. Phase 10 Acceptance Criteria
 
-1. **Zero Horizontal Body Overflow:** App canvas never creates unwanted body scrollbars at 320px, 375px, 768px, 1024px, or 1440px viewports.
-2. **Seamless Navigation:** Mobile navigation drawer opens cleanly, locks background scroll appropriately, and dismisses on link click or backdrop tap.
-3. **Responsive Forms & Cards:** Message & URL analysis input forms scale gracefully from 320px mobile screens to wide desktop monitors.
-4. **Readable Scan History:** Scan history logs remain easily readable via table horizontal scroll with full modal detail support on mobile devices.
-5. **Aesthetics & Theme Preservation:** Dark Cyber aesthetic (`#05080e`, `#00ff66` neon accents) preserved with zero breaking changes to business logic or APIs.
-
----
-
-## 9. Verification Strategy
-
-### Responsive Viewport Verification
-- **Mobile Small (320px - 375px):** iPhone SE / Android small screens.
-- **Mobile Large (390px - 428px):** iPhone 13/14/15 Pro Max, Pixel devices.
-- **Tablet (768px - 1024px):** iPad / Android tablet viewports.
-- **Desktop (1280px - 1920px):** standard laptop and desktop monitors.
-
-### Page-by-Page Inspection Checklist
-- [ ] Home Page hero banner & quick scan CTA responsiveness.
-- [ ] Dashboard stats metrics & recent threat list layout.
-- [ ] Message Analysis input form, language selector, and report card layout.
-- [ ] URL Analysis input bar, heuristic badges, and evidence layout.
-- [ ] History search bar, risk filter dropdowns, log table, and detail modal.
-- [ ] Safety Guidelines card grid collapse.
-- [ ] About page & Settings page responsive layout.
+1. **HTTP Security Headers:** Express server returns Helmet security headers on all responses.
+2. **Rate Limiting Active:** `/api/` endpoints enforce 100 requests / 15-minute rate limit.
+3. **Payload Protection:** Body parser enforces 1MB max payload limit.
+4. **Zero Secret Leakage:** Error responses never expose stack traces or MongoDB connection URIs.
+5. **Dynamic CORS & Frontend URL:** Production CORS origin list and frontend `VITE_API_BASE_URL` are dynamically configurable via environment variables.
+6. **Functional Baseline Intact:** Phase 4–8 logic, Phase 6 risk scoring, Phase 7 MongoDB persistence, and Phase 9 responsive UI remain 100% functional.
 
 ---
 
-## 10. Phase 9 Completion Criteria
+## 9. Phase 10 Completion Criteria
 
-- [ ] All 11 target frontend files inspected and polished.
-- [ ] Frontend build (`npm run build` in `frontend/`) completes cleanly without warnings or errors.
-- [ ] Backend test suites (`phase6TestRunner.js`, `phase7TestRunner.js`) continue passing 100%.
-- [ ] No Phase 10, 11, or 12 features implemented.
+- [ ] Security dependencies installed in `backend/package.json`.
+- [ ] Security middleware mounted and verified in `backend/server.js`.
+- [ ] Error handler and database connection loggers sanitized.
+- [ ] Frontend `VITE_API_BASE_URL` configuration updated.
+- [ ] Frontend build (`npm run build`) and backend tests (`phase6TestRunner.js`, `phase7TestRunner.js`) pass 100%.
+- [ ] No Phase 11 testing framework creation or Phase 12 deployment executed.
 
 ---
 
-*End of Implementation Plan — Awaiting User Approval.*
+*End of Phase 10 Implementation Plan — Awaiting User Approval.*

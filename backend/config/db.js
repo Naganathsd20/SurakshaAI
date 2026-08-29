@@ -20,7 +20,8 @@ const connectDB = async () => {
     console.log(`✅ [MongoDB Connected]: Host -> ${conn.connection.host}`);
     return true;
   } catch (error) {
-    console.error(`❌ [MongoDB Error]: Connection failed -> ${error.message}`);
+    const sanitizedErrorMsg = (error.message || '').replace(/mongodb(\+srv)?:\/\/[^@]+@/gi, 'mongodb://[REDACTED_CREDENTIALS]@');
+    console.error(`❌ [MongoDB Error]: Connection failed -> ${sanitizedErrorMsg}`);
     console.warn('ℹ️ [MongoDB Info]: Server continuing without active database connection.');
     return false;
   }
