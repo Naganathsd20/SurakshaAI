@@ -1,126 +1,113 @@
-# SurakshaAI Implementation Plan — Phase 10: Security & Production Configuration
+# SurakshaAI Implementation Plan — Phase 11: Complete Testing & QA
 
-## 1. Goal Description & Background (Phase 1–9 Baseline)
+## 1. Goal Description & Background (Phase 1–10 Baseline)
 
-SurakshaAI has completed **Phases 1 through 9**:
-- **Phases 1–7:** Core detection engine, regional NLP, risk scoring, and MongoDB persistence baseline.
-- **Phase 8:** Complete system integration and genuine persisted document `scanId` propagation.
-- **Phase 9:** Responsive UI and UX polish committed and pushed to `main`.
+SurakshaAI has completed **Phases 1 through 10**:
+- **Phases 1–7:** Detection engine, regional NLP, risk scoring, and MongoDB persistence baseline.
+- **Phase 8:** System integration & real document `scanId` propagation.
+- **Phase 9:** Responsive UI & final UX polish across 320px–1440px viewports (committed & pushed).
+- **Phase 10:** Security hardening, Helmet headers, IP rate-limiting, 1MB body limits, and dynamic CORS configuration (committed & pushed).
 
-**Phase 10 Objective:**
-Harden the Node Express backend and React frontend for production readiness by implementing HTTP security headers (`helmet`), rate limiting (`express-rate-limit`), body size limits, production CORS controls, secure error handling without stack trace/credential leaks, and dynamic production environment variable support.
-
----
-
-## 2. Security Areas to Inspect
-
-| Area | Component | Inspection Objective |
-| :--- | :--- | :--- |
-| **HTTP Security Headers** | Express App (`server.js`) | Protect against XSS, clickjacking, MIME-sniffing via `helmet`. |
-| **Rate Limiting** | Express Router (`server.js`) | Protect against DDoS and brute-force flooding via `express-rate-limit`. |
-| **Body Size Limits** | Express Body Parser (`server.js`) | Enforce `1mb` maximum JSON payload size to prevent memory exhaustion attacks. |
-| **CORS Policy** | Express App (`server.js`) | Restrict origin access dynamically using `process.env.ALLOWED_ORIGINS`. |
-| **Error Sanitization** | `middleware/errorHandler.js` | Ensure stack traces, file paths, and database URI strings are never returned to client responses. |
-| **Database Security** | `config/db.js` | Manage connection strings strictly via `process.env.MONGODB_URI` and sanitize log outputs. |
-| **Frontend Production URL**| `utils/constants.js` | Support dynamic `VITE_API_BASE_URL` for production deployment without client secret leakage. |
+**Phase 11 Objective:**
+Execute end-to-end quality assurance, regression testing, detection accuracy verification, frontend UX validation, security boundary verification, and responsive viewport checks. Fix any genuine defects uncovered during QA without altering core detection strategies or introducing Phase 12 deployment actions.
 
 ---
 
-## 3. Backend Security Changes (Phase 10 Scope)
+## 2. Testing Scope & Categories
 
-### Dependency Installations (`backend/package.json`)
-Install production security packages:
-- `helmet`: Express security HTTP headers middleware.
-- `express-rate-limit`: API rate limiting middleware.
-- `compression`: Gzip body compression middleware.
+### Category 1: Backend API Endpoints & Contracts
+- `GET /api/health` — Returns status 200 OK with operational payload.
+- `POST /api/analyze/message` — Accepts `{ text, language }`, returns Phase 6 risk score, language metadata, intent signals, explainability, recommendations, and optional `scanId`.
+- `POST /api/analyze/url` — Accepts `{ url }`, returns URL heuristic breakdown, risk score, and recommendations.
+- `POST /api/analyze/risk` — Accepts `{ type, payload }`, returns standardized Phase 6 risk assessment contract.
+- `GET /api/history` — Returns paginated scan records or safe offline response if MongoDB is disconnected.
+- `GET /api/history/:id` — Returns single scan record or 400 Bad Request for invalid ObjectId format.
 
-### Express Application Hardening (`backend/server.js`)
-- Mount `helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } })`.
-- Mount `compression()`.
-- Define and mount `apiLimiter`: 100 requests per 15-minute window per IP for `/api/` endpoints.
-- Configure `cors()` to read `process.env.ALLOWED_ORIGINS` dynamically, defaulting to dev origins (`http://localhost:3000`, `http://127.0.0.1:3000`, `http://localhost:5173`).
-- Set `express.json({ limit: '1mb' })` and `express.urlencoded({ extended: true, limit: '1mb' })`.
-- Add graceful process termination handlers (`SIGINT`, `SIGTERM`) to close Express HTTP server and MongoDB pool cleanly.
+### Category 2: Regional Language Detection & Intent Signals
+- **English Phishing:** Urgent banking block SMS ("Your HDFC account will be blocked. Verify OTP.").
+- **Hindi (Devanagari):** Regional banking scam ("आपका खाता निष्क्रय कर दिया जाएगा। केवाईसी अपडेट करें।").
+- **Kannada (Kannada script):** Regional block threat ("ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಖಾತೆ ಬ್ಲಾಕ್ ಆಗುತ್ತದೆ. OTP ಹಂಚಿಕೊಳ್ಳಿ.").
+- **Code-Mixed / Transliterated (Hinglish):** Latin script regional message ("Aapka account block ho jayega, share OTP.").
+- **Other Supported Indic Scripts:** Tamil, Telugu, Marathi, Bengali sample payloads.
+- **Safe Messages:** Non-phishing benign messages (e.g. meeting reminders, greeting messages) yielding score < 30 and `SAFE` level.
 
-### Secure Error Handler (`backend/middleware/errorHandler.js`)
-- Update `errorHandler` to inspect `NODE_ENV`.
-- Never include raw `err.stack` or raw DB error messages in client JSON responses when in production mode.
-- Ensure error messages do not leak internal file paths or `mongodb://` connection strings.
+### Category 3: URL Heuristics & Domain Spoofing
+- **IP Address URLs:** `http://192.168.1.1/login` yielding `HIGH` risk (score >= 80).
+- **Unencrypted HTTP Protocol:** `http://` links flagged for lack of SSL/TLS.
+- **Suspicious Hyphenated Brands:** Spoofed hostnames (e.g., `sbi-kyc-verify.com`).
+- **Phishing Keywords:** Target keywords (`verify`, `login`, `kyc`, `otp`, `account`).
+- **Safe Legitimate URLs:** `https://cybercrime.gov.in` yielding `SAFE` level (score < 30).
 
----
+### Category 4: Frontend Component & Route QA
+- **Navigation:** Header logo, phase badge, backend status pill, sidebar links, mobile drawer nav.
+- **Dashboard Page (`/dashboard`):** 4 metric summary cards, quick scan trigger cards, recent activity preview table, scan detail modal preview.
+- **Message Analysis Page (`/analyze-message`):** Preset message selector buttons, language script dropdown, text area character counter, clear button, scanning spinner, risk report cards.
+- **URL Analysis Page (`/analyze-url`):** Preset URL buttons, link input box, clear button, scanning spinner, URL report cards.
+- **History Page (`/history`):** Search bar, risk filter dropdown, type filter dropdown, log history table, MongoDB status warning banner, record details modal.
+- **Safety Tips Page (`/safety-tips`):** 7 protective awareness cards, 1930 helpline banner.
+- **About & Settings Pages (`/about`, `/settings`):** Vision banner, tech stack grid, team members, default language setting, notification toggle switches, locked dark theme pill.
 
-## 4. Production & Environment Configuration Strategy
+### Category 5: Regression Testing Suite
+- Execute `node backend/tests/phase6TestRunner.js` (Assert 21/21 tests pass).
+- Execute `node backend/tests/phase7TestRunner.js` (Assert 12/12 tests pass).
 
-### Environment Variables Template (`backend/.env.example`)
-Update `.env.example` to document all production variables:
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/suraksha_ai
-NODE_ENV=production
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
-NLP_PROVIDER=local-nlp-engine
-```
+### Category 6: Security & Input Hardening QA
+- **Payload Protection:** Verify 1MB request body limit rejects oversized payloads.
+- **Rate Limiting:** Verify `/api/` endpoints return `RateLimit-Limit: 100` response headers.
+- **Security Headers:** Verify Helmet sets `X-Content-Type-Options`, `X-Frame-Options`, `X-DNS-Prefetch-Control`.
+- **Error Leakage Check:** Verify 400 and 404 error responses omit stack traces and `mongodb://` URIs.
+- **Secrets Isolation:** Verify frontend static build contains zero API keys or DB credentials.
 
-### Database Connection Hardening (`backend/config/db.js`)
-- Ensure connection options include `serverSelectionTimeoutMS: 5000`.
-- Verify console output never logs raw URI containing password credentials.
+### Category 7: Responsive Viewport QA
+Verify layout aesthetics and touch targets across 5 standard viewport widths:
+- **320px** (Mobile Small - iPhone SE)
+- **375px** (Mobile Standard - iPhone 13/14)
+- **768px** (Tablet - iPad Portrait)
+- **1024px** (Tablet Landscape / Laptop)
+- **1440px** (Desktop Monitor)
 
----
-
-## 5. Frontend Production Safety (`frontend/src/utils/constants.js`)
-
-- Update `API_BASE_URL` to dynamically inspect `import.meta.env.VITE_API_BASE_URL`:
-  ```javascript
-  export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
-  ```
-- Audit frontend code to guarantee zero secrets, private keys, or DB credentials exist in client bundles.
-
----
-
-## 6. Security Verification Strategy
-
-After applying Phase 10 security hardening, perform manual and automated API checks:
-
-1. **Oversized Input Verification:** Send >1MB request payload to `POST /api/analyze/message` to verify 413 Payload Too Large protection.
-2. **Rate Limit Verification:** Send repeated requests to verify rate limiter headers (`RateLimit-Limit`, `RateLimit-Remaining`).
-3. **Security Headers Verification:** Verify response headers include `X-Content-Type-Options`, `X-Frame-Options`, `X-DNS-Prefetch-Control`.
-4. **Invalid ObjectId & Error Leak Check:** Request `GET /api/history/invalid-id-123` and verify error response does not leak stack trace or connection URI.
-5. **CORS Verification:** Verify allowed origin response header behavior.
+### Category 8: Build & Runtime Compilation QA
+- Run `npm run build` in `frontend/` to verify zero production compilation warnings/errors.
+- Verify Express backend boots cleanly on `PORT 5000`.
 
 ---
 
-## 7. Files Likely to be Modified
+## 3. Regression & Bug-Fixing Strategy
 
-- `backend/package.json` *(Add helmet, express-rate-limit, compression)*
-- `backend/package-lock.json` *(Lockfile update)*
-- `backend/server.js` *(Mount helmet, rate-limiter, compression, CORS config, graceful shutdown)*
-- `backend/middleware/errorHandler.js` *(Sanitize stack trace and connection leakage)*
-- `backend/config/db.js` *(Sanitize database connection logging)*
-- `backend/.env.example` *(Document production environment variables)*
-- `frontend/src/utils/constants.js` *(Dynamic VITE_API_BASE_URL resolution)*
+1. **Regression Guard:** All Phase 6 (21 tests) and Phase 7 (12 tests) assertions must remain 100% green.
+2. **Defect Remediation:** If Phase 11 QA identifies an integration bug or edge-case defect:
+   - Apply a minimal, targeted fix directly to the affected module.
+   - Do NOT alter detection algorithms or risk scoring weights unnecessarily.
+   - Do NOT weaken existing test assertions.
 
 ---
 
-## 8. Phase 10 Acceptance Criteria
+## 4. Files Likely to be Inspected / Modified
 
-1. **HTTP Security Headers:** Express server returns Helmet security headers on all responses.
-2. **Rate Limiting Active:** `/api/` endpoints enforce 100 requests / 15-minute rate limit.
-3. **Payload Protection:** Body parser enforces 1MB max payload limit.
-4. **Zero Secret Leakage:** Error responses never expose stack traces or MongoDB connection URIs.
-5. **Dynamic CORS & Frontend URL:** Production CORS origin list and frontend `VITE_API_BASE_URL` are dynamically configurable via environment variables.
-6. **Functional Baseline Intact:** Phase 4–8 logic, Phase 6 risk scoring, Phase 7 MongoDB persistence, and Phase 9 responsive UI remain 100% functional.
+- `backend/tests/phase6TestRunner.js` *(Regression verification)*
+- `backend/tests/phase7TestRunner.js` *(Regression verification)*
+- `frontend/src/*` *(Only if Phase 11 QA uncovers a genuine UI bug)*
+- `backend/services/*` *(Only if Phase 11 QA uncovers a genuine backend bug)*
 
 ---
 
-## 9. Phase 10 Completion Criteria
+## 5. Phase 11 Acceptance Criteria
 
-- [ ] Security dependencies installed in `backend/package.json`.
-- [ ] Security middleware mounted and verified in `backend/server.js`.
-- [ ] Error handler and database connection loggers sanitized.
-- [ ] Frontend `VITE_API_BASE_URL` configuration updated.
-- [ ] Frontend build (`npm run build`) and backend tests (`phase6TestRunner.js`, `phase7TestRunner.js`) pass 100%.
-- [ ] No Phase 11 testing framework creation or Phase 12 deployment executed.
+1. **Backend API Contract Passed:** All 5 backend API routes return expected JSON schemas.
+2. **Detection Engine Passed:** Safe, medium, and high-risk regional messages & URLs correctly classified.
+3. **Regression Passed:** Phase 6 (21/21) and Phase 7 (12/12) test suites pass 100%.
+4. **Security Hardening Passed:** Helmet headers active, Rate limiting active, 1MB limit active, zero secret/stack trace leakage.
+5. **Responsive QA Passed:** Zero horizontal body overflow at 320px, 375px, 768px, 1024px, 1440px.
+6. **Production Build Passed:** `npm run build` compiles cleanly with zero errors.
 
 ---
 
-*End of Phase 10 Implementation Plan — Awaiting User Approval.*
+## 6. Phase 11 Completion Criteria & Clear Separation from Phase 12
+
+- [ ] All 8 QA test categories executed and verified.
+- [ ] Any uncovered defects resolved cleanly.
+- [ ] No cloud deployment, Docker containerization, or Phase 12 release triggers executed.
+
+---
+
+*End of Phase 11 Implementation Plan — Awaiting User Approval.*
