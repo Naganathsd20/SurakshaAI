@@ -120,20 +120,22 @@ export const History = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search logs by keyword..."
-            className="w-full bg-[#05080e] border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs font-mono-cyber text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[#00ff66]/50"
+            className="w-full bg-[#05080e] border border-slate-800 rounded-lg pl-9 pr-3 py-2.5 text-xs font-mono-cyber text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 min-h-[40px]"
           />
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
         </div>
 
         {/* Filter Dropdowns */}
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center gap-2">
-            <Filter className="w-3.5 h-3.5 text-[#00ff66]" />
-            <span className="text-[11px] font-mono-cyber text-slate-400">RISK:</span>
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+            <div className="flex items-center gap-1.5">
+              <Filter className="w-3.5 h-3.5 text-[#00ff66]" />
+              <span className="text-[11px] font-mono-cyber text-slate-400">RISK:</span>
+            </div>
             <select
               value={riskFilter}
               onChange={(e) => setRiskFilter(e.target.value)}
-              className="bg-[#05080e] border border-slate-800 rounded px-2.5 py-1 text-xs font-mono-cyber text-slate-300 focus:outline-none focus:border-[#00ff66]/50"
+              className="bg-[#05080e] border border-slate-800 rounded px-3 py-1.5 text-xs font-mono-cyber text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 min-h-[36px]"
             >
               <option value="ALL">All Risk Levels</option>
               <option value="HIGH">High Risk Only</option>
@@ -142,12 +144,12 @@ export const History = () => {
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
             <span className="text-[11px] font-mono-cyber text-slate-400">TYPE:</span>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="bg-[#05080e] border border-slate-800 rounded px-2.5 py-1 text-xs font-mono-cyber text-slate-300 focus:outline-none focus:border-[#00ff66]/50"
+              className="bg-[#05080e] border border-slate-800 rounded px-3 py-1.5 text-xs font-mono-cyber text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 min-h-[36px]"
             >
               <option value="ALL">All Scan Types</option>
               <option value="MESSAGE">Messages Only</option>
@@ -223,10 +225,11 @@ export const History = () => {
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
                         <button
                           onClick={() => setSelectedRecord(item)}
-                          className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-[#00ff66] border border-slate-800 transition-colors"
+                          className="min-w-[36px] min-h-[36px] p-2 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-[#00ff66] border border-slate-800 transition-colors inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50"
                           title="View Complete Report"
+                          aria-label="View Complete Scan Report"
                         >
-                          <Eye className="w-3.5 h-3.5 text-[#00ff66]" />
+                          <Eye className="w-4 h-4 text-[#00ff66]" />
                         </button>
                       </td>
                     </tr>
@@ -240,16 +243,25 @@ export const History = () => {
 
       {/* Record Detail Modal */}
       {selectedRecord && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="cyber-card w-full max-w-2xl p-6 rounded-xl border border-slate-800 space-y-5 relative max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Scan Record Detail Modal"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedRecord(null);
+          }}
+        >
+          <div className="cyber-card w-full max-w-2xl p-4 sm:p-6 rounded-xl border border-slate-800 space-y-5 relative max-h-[90vh] overflow-y-auto animate-fade-in">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-[#00ff66]" />
-                <h3 className="text-base font-bold font-heading text-white">MongoDB Record Details</h3>
+                <h3 className="text-base font-bold font-heading text-white">Scan Record Details</h3>
               </div>
               <button
                 onClick={() => setSelectedRecord(null)}
-                className="text-xs font-mono-cyber text-slate-400 hover:text-white px-2.5 py-1 bg-slate-900 rounded border border-slate-800"
+                className="min-h-[36px] text-xs font-mono-cyber text-slate-400 hover:text-white px-3 py-1.5 bg-slate-900 hover:bg-slate-800 rounded border border-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 transition-colors"
+                aria-label="Close modal details"
               >
                 CLOSE
               </button>

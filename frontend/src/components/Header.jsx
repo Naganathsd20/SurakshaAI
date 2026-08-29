@@ -15,8 +15,9 @@ export const Header = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileNavOpen(true)}
-            className="md:hidden p-2 rounded-lg bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
+            className="md:hidden min-w-[44px] min-h-[44px] p-2.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 transition-colors"
             aria-label="Open navigation menu"
+            aria-expanded={mobileNavOpen}
           >
             <Menu className="w-5 h-5 text-[#00ff66]" />
           </button>

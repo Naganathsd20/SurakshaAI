@@ -62,7 +62,7 @@ export const URLAnalysis = () => {
   return (
     <div className="space-y-8 py-2 max-w-4xl mx-auto">
       {/* Page Header */}
-      <div className="pb-4 border-b border-slate-800 flex items-center justify-between">
+      <div className="pb-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold font-heading text-white flex items-center gap-3">
             <Globe className="w-6 h-6 text-[#00ff66]" />
@@ -72,7 +72,7 @@ export const URLAnalysis = () => {
             URL Heuristics, Protocol Checks & Phase 6 Risk Scoring Engine
           </p>
         </div>
-        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
+        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0 self-start sm:self-auto">
           PHASE 6 — RISK SCORING & EXPLAINABILITY
         </span>
       </div>
@@ -89,9 +89,9 @@ export const URLAnalysis = () => {
               key={preset.id}
               onClick={() => handlePresetSelect(preset)}
               type="button"
-              className="px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-[#00ff66]/50 text-xs font-mono-cyber text-slate-300 hover:text-white transition-colors text-left flex items-center gap-2"
+              className="min-h-[38px] px-3.5 py-2 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-[#00ff66]/50 text-xs font-mono-cyber text-slate-300 hover:text-white transition-colors text-left flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50"
             >
-              <span className={`w-2 h-2 rounded-full ${preset.riskLevel === 'SAFE' ? 'bg-[#00ff66]' : 'bg-red-400'}`} />
+              <span className={`w-2 h-2 rounded-full shrink-0 ${preset.riskLevel === 'SAFE' ? 'bg-[#00ff66]' : 'bg-red-400'}`} />
               <span>{preset.title}</span>
             </button>
           ))}
@@ -99,7 +99,7 @@ export const URLAnalysis = () => {
       </div>
 
       {/* Input Form Box */}
-      <form onSubmit={handleAnalyze} className="cyber-card p-6 rounded-xl border border-slate-800 space-y-4">
+      <form onSubmit={handleAnalyze} className="cyber-card p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4">
         <label className="text-xs font-mono-cyber text-slate-300 font-semibold flex items-center gap-2">
           <Lock className="w-4 h-4 text-[#00ff66]" />
           <span>TARGET WEB LINK FOR RISK SCORING</span>
@@ -112,13 +112,13 @@ export const URLAnalysis = () => {
               value={inputUrl}
               onChange={(e) => setInputUrl(e.target.value)}
               placeholder="https://example-suspicious-link.com/login"
-              className="w-full bg-[#05080e] border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[#00ff66]/50 font-mono-cyber transition-colors"
+              className="w-full bg-[#05080e] border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 font-mono-cyber transition-colors min-h-[44px]"
             />
             {inputUrl && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="absolute right-3 top-3.5 text-xs text-slate-500 hover:text-red-400"
+                className="absolute right-3 top-3 text-xs text-slate-500 hover:text-red-400 p-1 min-h-[36px] flex items-center focus:outline-none focus:ring-2 focus:ring-red-400/50 rounded"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -128,7 +128,7 @@ export const URLAnalysis = () => {
           <button
             type="submit"
             disabled={!inputUrl.trim() || isScanning}
-            className={`px-6 py-3 rounded-lg bg-[#00ff66] text-black font-bold text-xs font-mono-cyber flex items-center justify-center gap-2 shrink-0 transition-all ${
+            className={`min-h-[44px] px-6 py-3 rounded-lg bg-[#00ff66] text-black font-bold text-xs font-mono-cyber flex items-center justify-center gap-2 shrink-0 transition-all focus:outline-none focus:ring-2 focus:ring-[#00ff66] ${
               !inputUrl.trim() || isScanning
                 ? 'opacity-50 cursor-not-allowed'
                 : 'hover:bg-[#00cc52] shadow-[0_0_15px_rgba(0,255,102,0.3)]'

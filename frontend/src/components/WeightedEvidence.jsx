@@ -66,7 +66,7 @@ export const WeightedEvidence = ({ weightedEvidence = [], scoringBreakdown = {} 
                 )}
 
                 {/* Sources Badges */}
-                <div className="flex items-center gap-1.5 pt-0.5">
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                   <span className="text-[10px] font-mono-cyber text-slate-500">SOURCES:</span>
                   {item.sources.map((src, idx) => (
                     <span

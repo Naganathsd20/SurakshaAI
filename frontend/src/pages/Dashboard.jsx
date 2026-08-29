@@ -162,10 +162,11 @@ export const Dashboard = () => {
                   <td className="py-3 px-3 text-right">
                     <button
                       onClick={() => setSelectedRecord(item)}
-                      className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800"
+                      className="min-w-[36px] min-h-[36px] p-2 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50"
                       title="View Details"
+                      aria-label="View Details"
                     >
-                      <Eye className="w-3.5 h-3.5 text-[#00ff66]" />
+                      <Eye className="w-4 h-4 text-[#00ff66]" />
                     </button>
                   </td>
                 </tr>
@@ -190,13 +191,22 @@ export const Dashboard = () => {
 
       {/* Record Details Modal */}
       {selectedRecord && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="cyber-card w-full max-w-lg p-6 rounded-xl border border-slate-800 space-y-4 relative">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Scan Record Preview Modal"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedRecord(null);
+          }}
+        >
+          <div className="cyber-card w-full max-w-lg p-6 rounded-xl border border-slate-800 space-y-4 relative animate-fade-in">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold font-heading text-white">{selectedRecord.title}</h3>
               <button
                 onClick={() => setSelectedRecord(null)}
-                className="text-xs font-mono-cyber text-slate-400 hover:text-white px-2 py-1 bg-slate-900 rounded"
+                className="min-h-[36px] text-xs font-mono-cyber text-slate-400 hover:text-white px-3 py-1 bg-slate-900 hover:bg-slate-800 rounded border border-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 transition-colors"
+                aria-label="Close modal"
               >
                 CLOSE
               </button>
@@ -205,7 +215,7 @@ export const Dashboard = () => {
               <p className="text-slate-400"><strong>Type:</strong> {selectedRecord.type}</p>
               <p className="text-slate-400"><strong>Language:</strong> {selectedRecord.language}</p>
               <p className="text-slate-400"><strong>Timestamp:</strong> {selectedRecord.timestamp}</p>
-              <div className="p-3 rounded bg-slate-900/80 text-slate-200 font-sans border border-slate-800">
+              <div className="p-3 rounded bg-slate-900/80 text-slate-200 font-sans border border-slate-800 break-words">
                 "{selectedRecord.target}"
               </div>
               <div className="pt-2 flex items-center justify-between">

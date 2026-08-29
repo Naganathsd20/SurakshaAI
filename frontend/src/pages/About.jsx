@@ -16,7 +16,7 @@ export const About = () => {
   return (
     <div className="space-y-8 py-2 max-w-4xl mx-auto">
       {/* Page Header */}
-      <div className="pb-4 border-b border-slate-800 flex items-center justify-between">
+      <div className="pb-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold font-heading text-white flex items-center gap-3">
             <Info className="w-6 h-6 text-[#00ff66]" />
@@ -26,7 +26,7 @@ export const About = () => {
             Platform architecture, mission, and regional language security vision
           </p>
         </div>
-        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
+        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0 self-start sm:self-auto">
           {PHASE}
         </span>
       </div>

@@ -20,7 +20,7 @@ export const Settings = () => {
   return (
     <div className="space-y-6 py-2 max-w-4xl mx-auto">
       {/* Page Header */}
-      <div className="pb-4 border-b border-slate-800 flex items-center justify-between">
+      <div className="pb-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold font-heading text-white flex items-center gap-3">
             <SettingsIcon className="w-6 h-6 text-[#00ff66]" />
@@ -30,7 +30,7 @@ export const Settings = () => {
             Configure regional language defaults, UI theme, and security preferences
           </p>
         </div>
-        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66]">
+        <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0 self-start sm:self-auto">
           PREFERENCES
         </span>
       </div>
@@ -55,7 +55,7 @@ export const Settings = () => {
             <select
               value={defaultLang}
               onChange={(e) => setDefaultLang(e.target.value)}
-              className="bg-[#05080e] border border-slate-800 rounded px-3 py-1.5 text-xs font-mono-cyber text-[#00ff66] focus:outline-none"
+              className="w-full sm:w-auto bg-[#05080e] border border-slate-800 rounded px-3 py-2 text-xs font-mono-cyber text-[#00ff66] focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 min-h-[38px]"
             >
               {SUPPORTED_LANGUAGES.map((lang) => (
                 <option key={lang.code} value={lang.code}>
@@ -91,12 +91,14 @@ export const Settings = () => {
             <button
               type="button"
               onClick={() => setNotifications(!notifications)}
-              className={`w-11 h-6 rounded-full transition-colors relative flex items-center px-1 ${
+              className={`w-12 h-7 rounded-full transition-colors relative flex items-center px-1 focus:outline-none focus:ring-2 focus:ring-[#00ff66] ${
                 notifications ? 'bg-[#00ff66]' : 'bg-slate-800'
               }`}
+              aria-label="Toggle in-browser threat alerts"
+              aria-checked={notifications}
             >
               <span
-                className={`w-4 h-4 rounded-full bg-black transition-transform ${
+                className={`w-5 h-5 rounded-full bg-black transition-transform ${
                   notifications ? 'translate-x-5' : 'translate-x-0'
                 }`}
               />
@@ -115,12 +117,14 @@ export const Settings = () => {
             <button
               type="button"
               onClick={() => setAutoScanLinks(!autoScanLinks)}
-              className={`w-11 h-6 rounded-full transition-colors relative flex items-center px-1 ${
+              className={`w-12 h-7 rounded-full transition-colors relative flex items-center px-1 focus:outline-none focus:ring-2 focus:ring-[#00ff66] ${
                 autoScanLinks ? 'bg-[#00ff66]' : 'bg-slate-800'
               }`}
+              aria-label="Toggle heuristic link inspection"
+              aria-checked={autoScanLinks}
             >
               <span
-                className={`w-4 h-4 rounded-full bg-black transition-transform ${
+                className={`w-5 h-5 rounded-full bg-black transition-transform ${
                   autoScanLinks ? 'translate-x-5' : 'translate-x-0'
                 }`}
               />
@@ -137,7 +141,7 @@ export const Settings = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-400 text-[11px]">
           <p>Application Name: <strong className="text-white">{APP_NAME}</strong></p>
-          <p>Active Roadmap Stage: <strong className="text-[#00ff66]">Phase 2 — Frontend & UI</strong></p>
+          <p>Active Roadmap Stage: <strong className="text-[#00ff66]">Phase 9 — Responsive UI & UX Polish</strong></p>
           <p>Frontend Environment: <strong className="text-white">React 18 + Vite</strong></p>
           <p>Backend API Status: <strong className="text-[#00ff66]">http://localhost:5000/api</strong></p>
         </div>

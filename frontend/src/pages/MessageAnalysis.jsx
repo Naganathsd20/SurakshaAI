@@ -90,9 +90,9 @@ export const MessageAnalysis = () => {
               key={preset.id}
               onClick={() => handlePresetSelect(preset)}
               type="button"
-              className="px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-[#00ff66]/50 text-xs font-mono-cyber text-slate-300 hover:text-white transition-colors text-left flex items-center gap-2"
+              className="min-h-[38px] px-3.5 py-2 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-[#00ff66]/50 text-xs font-mono-cyber text-slate-300 hover:text-white transition-colors text-left flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50"
             >
-              <span className="w-2 h-2 rounded-full bg-[#00ff66]" />
+              <span className="w-2 h-2 rounded-full bg-[#00ff66] shrink-0" />
               <span>{preset.title}</span>
             </button>
           ))}
@@ -100,7 +100,7 @@ export const MessageAnalysis = () => {
       </div>
 
       {/* Input Form Box */}
-      <form onSubmit={handleAnalyze} className="cyber-card p-6 rounded-xl border border-slate-800 space-y-4">
+      <form onSubmit={handleAnalyze} className="cyber-card p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <label className="text-xs font-mono-cyber text-slate-300 font-semibold flex items-center gap-2">
             <span>PASTE REGIONAL MESSAGE FOR RISK EVALUATION</span>
@@ -108,11 +108,11 @@ export const MessageAnalysis = () => {
 
           {/* Language Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono-cyber text-slate-500">INTENDED SCRIPT:</span>
+            <span className="text-[11px] font-mono-cyber text-slate-500 shrink-0">INTENDED SCRIPT:</span>
             <select
               value={selectedLang}
               onChange={(e) => setSelectedLang(e.target.value)}
-              className="bg-[#05080e] border border-slate-800 rounded-md px-3 py-1 text-xs font-mono-cyber text-[#00ff66] focus:outline-none focus:border-[#00ff66]/50"
+              className="w-full sm:w-auto bg-[#05080e] border border-slate-800 rounded-md px-3 py-1.5 text-xs font-mono-cyber text-[#00ff66] focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50"
             >
               {SUPPORTED_LANGUAGES.map((lang) => (
                 <option key={lang.code} value={lang.code}>
@@ -130,17 +130,17 @@ export const MessageAnalysis = () => {
             onChange={(e) => setInputText(e.target.value)}
             rows={5}
             placeholder="Paste suspicious SMS, WhatsApp message, or email snippet in Hindi, Kannada, Marathi, Tamil, Telugu, Bengali, Hinglish or English..."
-            className="w-full bg-[#05080e] border border-slate-800 rounded-lg p-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[#00ff66]/50 transition-colors font-sans leading-relaxed"
+            className="w-full bg-[#05080e] border border-slate-800 rounded-lg p-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#00ff66]/50 transition-colors font-sans leading-relaxed resize-y"
           />
-          <div className="absolute bottom-3 right-3 flex items-center gap-3 text-[11px] font-mono-cyber text-slate-500">
+          <div className="flex items-center justify-between mt-2 px-1 text-[11px] font-mono-cyber text-slate-500">
             <span>{inputText.length} / 5000 chars</span>
             {inputText && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="text-slate-400 hover:text-red-400 flex items-center gap-1"
+                className="text-slate-400 hover:text-red-400 flex items-center gap-1.5 min-h-[36px] px-2 rounded focus:outline-none focus:ring-2 focus:ring-red-400/50"
               >
-                <RotateCcw className="w-3 h-3" />
+                <RotateCcw className="w-3.5 h-3.5" />
                 <span>CLEAR</span>
               </button>
             )}
@@ -148,7 +148,7 @@ export const MessageAnalysis = () => {
         </div>
 
         {/* Submit & Guidance */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-slate-800/80">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Info className="w-4 h-4 text-[#00ff66] shrink-0" />
             <span>Executes Phase 6 Weighted Risk Scoring & Explainability Engine</span>
@@ -157,7 +157,7 @@ export const MessageAnalysis = () => {
           <button
             type="submit"
             disabled={!inputText.trim() || isScanning}
-            className={`px-6 py-2.5 rounded-lg bg-[#00ff66] text-black font-bold text-xs font-mono-cyber flex items-center justify-center gap-2 transition-all ${
+            className={`min-h-[44px] w-full sm:w-auto px-6 py-2.5 rounded-lg bg-[#00ff66] text-black font-bold text-xs font-mono-cyber flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-2 focus:ring-[#00ff66] ${
               !inputText.trim() || isScanning
                 ? 'opacity-50 cursor-not-allowed'
                 : 'hover:bg-[#00cc52] shadow-[0_0_15px_rgba(0,255,102,0.3)]'
