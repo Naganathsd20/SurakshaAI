@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 // CORS configuration - Allow local development origin
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -37,7 +37,7 @@ app.use('/api/history', historyRoutes);
 app.get('/', (req, res) => {
   res.status(200).json({
     project: "SurakshaAI",
-    status: "Phase 7 REST API Operational with Database Persistence",
+    status: "Phase 8 Integrated REST API Operational",
     endpoints: {
       health: "/api/health",
       analyzeMessage: "POST /api/analyze/message",
@@ -70,3 +70,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+
