@@ -8,7 +8,7 @@ export const WeightedEvidence = ({ weightedEvidence = [], scoringBreakdown = {} 
         <div className="flex items-center justify-between border-b border-slate-800 pb-2">
           <div className="flex items-center gap-2 text-xs font-mono-cyber text-[#00ff66]">
             <Layers className="w-4 h-4" />
-            <span className="font-bold tracking-wider">PHASE 6 WEIGHTED EVIDENCE BREAKDOWN</span>
+            <span className="font-bold tracking-wider">WEIGHTED EVIDENCE BREAKDOWN</span>
           </div>
           <span className="text-[10px] font-mono-cyber px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
             0 DETECTED DRIVERS
@@ -26,11 +26,11 @@ export const WeightedEvidence = ({ weightedEvidence = [], scoringBreakdown = {} 
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2 text-xs font-mono-cyber text-[#00ff66]">
           <Layers className="w-4 h-4" />
-          <span className="font-bold tracking-wider">PHASE 6 WEIGHTED EVIDENCE BREAKDOWN</span>
+          <span className="font-bold tracking-wider">WEIGHTED EVIDENCE BREAKDOWN</span>
         </div>
 
         <span className="text-[10px] font-mono-cyber px-2.5 py-0.5 rounded bg-[#00ff66]/10 border border-[#00ff66]/30 text-[#00ff66]">
-          CROSS-LAYER DEDUPLICATED ENGINE
+          CROSS-LAYER THREAT DEDUPLICATION
         </span>
       </div>
 

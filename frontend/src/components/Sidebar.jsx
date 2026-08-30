@@ -56,10 +56,10 @@ export const Sidebar = () => {
       {/* Cyber Security Status Footer Box */}
       <div className="cyber-card p-3 rounded-lg border border-slate-800/80 bg-slate-900/40 text-[11px] font-mono-cyber text-slate-400 space-y-1">
         <div className="flex items-center gap-2 text-[#00ff66]">
-          <span className="w-2 h-2 rounded-full bg-[#00ff66] animate-ping" />
-          <span className="font-bold">PHASE 1 ACTIVE</span>
+          <span className="w-2 h-2 rounded-full bg-[#00ff66] animate-pulse" />
+          <span className="font-bold">SYSTEM ACTIVE</span>
         </div>
-        <p className="text-[10px] text-slate-500">Foundation established. Local API connected.</p>
+        <p className="text-[10px] text-slate-500">Real-time threat monitoring & detection active.</p>
       </div>
     </aside>
   );

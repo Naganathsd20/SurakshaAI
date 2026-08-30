@@ -70,11 +70,11 @@ export const MessageAnalysis = () => {
             Regional Message & Risk Analyzer
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Language Pre-Processing, NLP Intent Engine, Phase 4 Rules & Phase 6 Risk Scoring Engine
+            Language Pre-Processing, NLP Intent Engine, Threat Rules & AI Risk Scoring Engine
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0">
-          PHASE 6 — RISK SCORING & EXPLAINABILITY
+          AI RISK ANALYSIS
         </span>
       </div>
 
@@ -151,7 +151,7 @@ export const MessageAnalysis = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-slate-800/80">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Info className="w-4 h-4 text-[#00ff66] shrink-0" />
-            <span>Executes Phase 6 Weighted Risk Scoring & Explainability Engine</span>
+            <span>Executes real-time AI Risk Scoring & Explainability Engine</span>
           </div>
 
           <button
@@ -191,7 +191,7 @@ export const MessageAnalysis = () => {
         <div className="cyber-card p-6 rounded-xl border border-[#00ff66]/30 space-y-3 text-center animate-pulse">
           <Loader2 className="w-8 h-8 text-[#00ff66] animate-spin mx-auto" />
           <p className="text-sm font-bold font-heading text-white">Calculating Weighted Risk & Explainability...</p>
-          <p className="text-xs font-mono-cyber text-slate-400">Aggregating Phase 4 rules and Phase 5 NLP signals through Phase 6 scoring engine</p>
+          <p className="text-xs font-mono-cyber text-slate-400">Aggregating security rules and NLP intent signals through AI scoring engine</p>
         </div>
       )}
 
@@ -201,10 +201,10 @@ export const MessageAnalysis = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <h2 className="text-lg font-bold font-heading text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#00ff66]" />
-              Phase 6 Risk Assessment Report
+              Security Risk Assessment Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              FINAL RISK & EXPLAINABILITY ENGINE
+              AI RISK & EXPLAINABILITY REPORT
             </span>
           </div>
 
@@ -214,7 +214,7 @@ export const MessageAnalysis = () => {
           {/* 2. Language Metadata Card */}
           <LanguageMetaBadge language={analysisResult.language} />
 
-          {/* 3. Phase 6 Weighted Evidence Breakdown */}
+          {/* 3. Weighted Evidence Breakdown */}
           <WeightedEvidence
             weightedEvidence={analysisResult.weightedEvidence}
             scoringBreakdown={analysisResult.scoringBreakdown}
@@ -226,7 +226,7 @@ export const MessageAnalysis = () => {
             nlpAnalysis={analysisResult.nlpAnalysis}
           />
 
-          {/* 5. Phase 4 Rule Indicators Card */}
+          {/* 5. Threat Rule Indicators Card */}
           <ThreatIndicators
             indicators={analysisResult.phase4Indicators?.evidenceList?.map(e => `${e.label} (${e.evidence})`) || []}
             evidenceList={analysisResult.phase4Indicators?.evidenceList || []}

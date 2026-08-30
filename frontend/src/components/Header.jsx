@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Shield, Activity, Terminal, Menu } from 'lucide-react';
+import { Shield, Activity, Menu } from 'lucide-react';
 import { useHealthCheck } from '../hooks/useHealthCheck';
 import { MobileNav } from './MobileNav';
-import { APP_NAME, PHASE } from '../utils/constants';
+import { APP_NAME } from '../utils/constants';
 
 export const Header = () => {
   const health = useHealthCheck();
@@ -29,9 +29,6 @@ export const Header = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-lg font-heading tracking-wide text-white">{APP_NAME}</span>
-                <span className="text-[10px] font-mono-cyber px-2 py-0.5 rounded bg-emerald-950 text-[#00ff66] border border-[#00ff66]/30">
-                  v1.0-DEV
-                </span>
               </div>
               <p className="text-xs text-slate-400 hidden sm:block">Regional-Language Phishing Detection</p>
             </div>
@@ -40,22 +37,16 @@ export const Header = () => {
 
         {/* Right Side: System Status Indicators */}
         <div className="flex items-center gap-4">
-          {/* Phase Badge */}
-          <div className="hidden lg:flex items-center gap-2 text-xs font-mono-cyber px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300">
-            <Terminal className="w-3.5 h-3.5 text-[#00ff66]" />
-            <span>{PHASE}</span>
-          </div>
-
           {/* Backend Health Connection Indicator */}
           <div className="flex items-center gap-2 text-xs font-mono-cyber px-3 py-1 rounded-full bg-slate-900/90 border border-slate-800">
             <Activity className={`w-3.5 h-3.5 ${health.online ? 'text-[#00ff66] animate-pulse' : 'text-amber-400'}`} />
-            <span className="text-slate-400 hidden xs:inline">Backend:</span>
+            <span className="text-slate-400 hidden xs:inline">System Status:</span>
             {health.loading ? (
               <span className="text-slate-400">Connecting...</span>
             ) : health.online ? (
-              <span className="text-[#00ff66] font-semibold">ONLINE (200 OK)</span>
+              <span className="text-[#00ff66] font-semibold">Service Operational</span>
             ) : (
-              <span className="text-amber-400 font-semibold">DISCONNECTED</span>
+              <span className="text-amber-400 font-semibold">Service Offline</span>
             )}
           </div>
         </div>

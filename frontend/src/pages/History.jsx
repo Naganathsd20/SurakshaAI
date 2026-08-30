@@ -79,7 +79,7 @@ export const History = () => {
             Analysis History Log
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            Real MongoDB persistence log of scanned regional messages and web links
+            Persistent log of scanned regional messages and web links
           </p>
         </div>
         
@@ -305,7 +305,7 @@ export const History = () => {
                 </div>
               )}
 
-              {/* Phase 6 Explanation */}
+              {/* Risk Assessment Explanation */}
               {selectedRecord.explanation && (
                 <div>
                   <span className="text-[10px] text-slate-400 font-bold block mb-1">EXPLANATION NARRATIVE:</span>

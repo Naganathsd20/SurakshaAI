@@ -10,7 +10,7 @@ import {
   Target,
   Sparkles
 } from 'lucide-react';
-import { APP_NAME, APP_TAGLINE, PHASE } from '../utils/constants';
+import { APP_NAME, APP_TAGLINE } from '../utils/constants';
 
 export const About = () => {
   return (
@@ -27,7 +27,7 @@ export const About = () => {
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0 self-start sm:self-auto">
-          {PHASE}
+          PRODUCTION RELEASE
         </span>
       </div>
 
@@ -112,7 +112,7 @@ export const About = () => {
       <div className="cyber-card p-6 rounded-xl border border-slate-800 space-y-4">
         <div className="flex items-center gap-2 text-white font-bold font-heading border-b border-slate-800 pb-3">
           <Users className="w-5 h-5 text-[#00ff66]" />
-          <h2>Development Team</h2>
+          <h2>Project Team</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono-cyber">

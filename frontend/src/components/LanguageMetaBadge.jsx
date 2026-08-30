@@ -24,7 +24,7 @@ export const LanguageMetaBadge = ({ language }) => {
           <span className="font-bold tracking-wider">LANGUAGE & SCRIPT IDENTIFICATION</span>
         </div>
         <span className="text-[10px] font-mono-cyber px-2 py-0.5 rounded bg-[#00ff66]/10 border border-[#00ff66]/30 text-[#00ff66]">
-          PHASE 5 NLP PRE-PROCESSING
+          NLP SCRIPT PRE-PROCESSING
         </span>
       </div>
 

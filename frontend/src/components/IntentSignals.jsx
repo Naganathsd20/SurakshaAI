@@ -5,18 +5,18 @@ export const IntentSignals = ({ intentSignals = [], nlpAnalysis = {} }) => {
   const {
     phishingIntent = false,
     intentSummary = '',
-    provider = 'local-nlp-engine',
+    provider = 'nlp-heuristic-engine',
     isAiModelUsed = false
   } = nlpAnalysis;
 
-  const providerLabel = isAiModelUsed ? 'Gemini 1.5 Flash AI' : 'Deterministic Local NLP Engine';
+  const providerLabel = isAiModelUsed ? 'Gemini 1.5 Flash AI' : 'Deterministic NLP Engine';
 
   return (
     <div className="cyber-card p-5 rounded-xl border border-slate-800 space-y-4 bg-slate-900/60">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2 text-xs font-mono-cyber text-[#00ff66]">
           <BrainCircuit className="w-4 h-4 text-[#00ff66]" />
-          <span className="font-bold tracking-wider">PHASE 5 NLP INTENT ANALYSIS</span>
+          <span className="font-bold tracking-wider">NLP INTENT ANALYSIS</span>
         </div>
 
         <div className="flex items-center gap-2">

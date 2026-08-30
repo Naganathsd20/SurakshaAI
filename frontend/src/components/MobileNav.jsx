@@ -12,7 +12,7 @@ import {
   Info, 
   Settings 
 } from 'lucide-react';
-import { APP_NAME, PHASE } from '../utils/constants';
+import { APP_NAME } from '../utils/constants';
 
 const navItems = [
   { path: '/', label: 'Home', icon: Home },
@@ -99,7 +99,7 @@ export const MobileNav = ({ isOpen, onClose }) => {
 
         {/* Footer info in drawer */}
         <div className="pt-4 border-t border-slate-800 text-[10px] font-mono-cyber text-slate-500 space-y-1">
-          <p className="text-slate-400 font-bold">{PHASE}</p>
+          <p className="text-slate-400 font-bold">SurakshaAI Security System</p>
           <p>Regional-Language Phishing Detection</p>
         </div>
       </div>

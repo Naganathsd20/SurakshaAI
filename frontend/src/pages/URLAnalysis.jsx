@@ -69,11 +69,11 @@ export const URLAnalysis = () => {
             URL & Web Risk Scanner
           </h1>
           <p className="text-xs text-slate-400 font-mono-cyber mt-1">
-            URL Heuristics, Protocol Checks & Phase 6 Risk Scoring Engine
+            URL Heuristics, Protocol Checks & AI Risk Scoring Engine
           </p>
         </div>
         <span className="text-[11px] font-mono-cyber px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[#00ff66] shrink-0 self-start sm:self-auto">
-          PHASE 6 — RISK SCORING & EXPLAINABILITY
+          URL RISK ANALYSIS
         </span>
       </div>
 
@@ -150,7 +150,7 @@ export const URLAnalysis = () => {
 
         <div className="flex items-center gap-2 text-xs text-slate-400 pt-1">
           <AlertCircle className="w-4 h-4 text-[#00ff66] shrink-0" />
-          <span>Executes Phase 4 URL protocol checks & Phase 6 Risk Engine</span>
+          <span>Executes real-time URL protocol checks & AI risk engine</span>
         </div>
       </form>
 
@@ -180,7 +180,7 @@ export const URLAnalysis = () => {
               URL Risk Assessment Report
             </h2>
             <span className="text-[10px] font-mono-cyber text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              PHASE 6 ENGINE OUTPUT
+              ANALYSIS REPORT
             </span>
           </div>
 

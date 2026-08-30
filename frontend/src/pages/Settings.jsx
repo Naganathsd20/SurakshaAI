@@ -10,7 +10,7 @@ import {
   Terminal,
   Info
 } from 'lucide-react';
-import { SUPPORTED_LANGUAGES, APP_NAME, PHASE } from '../utils/constants';
+import { SUPPORTED_LANGUAGES, APP_NAME } from '../utils/constants';
 
 export const Settings = () => {
   const [defaultLang, setDefaultLang] = useState('hi');
@@ -141,9 +141,9 @@ export const Settings = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-400 text-[11px]">
           <p>Application Name: <strong className="text-white">{APP_NAME}</strong></p>
-          <p>Active Roadmap Stage: <strong className="text-[#00ff66]">Phase 9 — Responsive UI & UX Polish</strong></p>
-          <p>Frontend Environment: <strong className="text-white">React 18 + Vite</strong></p>
-          <p>Backend API Status: <strong className="text-[#00ff66]">http://localhost:5000/api</strong></p>
+          <p>System Version: <strong className="text-[#00ff66]">v1.0.0 (Production)</strong></p>
+          <p>Frontend Engine: <strong className="text-white">React 18 + Vite</strong></p>
+          <p>Backend Service: <strong className="text-[#00ff66]">Connected & Operational</strong></p>
         </div>
       </div>
     </div>
